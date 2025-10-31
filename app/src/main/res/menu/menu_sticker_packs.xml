@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_enable_all"
+        android:title="Включить все"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_disable_all"
+        android:title="Отключить все"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_sticker_store"
+        android:title="Магазин стикеров"
+        android:visible="false"
+        app:showAsAction="never" />
+
+</menu>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="4dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/photo_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:shapeAppearanceOverlay="@style/CustomShapeImagePlaylist"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true" />
+
+</FrameLayout>

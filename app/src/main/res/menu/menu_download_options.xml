@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_download_all"
+        android:title="Скачать все документы" />
+
+    <item
+        android:id="@+id/action_download_selected"
+        android:title="Скачать выбранные" />
+
+    <item
+        android:id="@+id/action_download_settings"
+        android:title="Настройки загрузки" />
+
+    <item
+        android:id="@+id/action_download_folder"
+        android:title="Открыть папку загрузок" />
+</menu>

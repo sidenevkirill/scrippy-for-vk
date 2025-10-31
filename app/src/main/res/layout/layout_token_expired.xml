@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/token_expired_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp">
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@drawable/refresh"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сессия истекла"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Требуется повторная авторизация"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/reauth_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Войти снова"
+        android:backgroundTint="@color/black"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/retry_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Повторить"
+        android:backgroundTint="@color/black" />
+
+</LinearLayout>

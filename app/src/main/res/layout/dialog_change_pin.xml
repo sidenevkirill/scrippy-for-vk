@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <!-- Иконка -->
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/lock_outline"
+        android:layout_marginBottom="16dp"
+        app:tint="?attr/colorPrimary" />
+
+    <!-- Заголовок -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Изменение PIN-кода"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textColor="?attr/colorOnSurface" />
+
+    <!-- Подзаголовок -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Введите текущий PIN-код для подтверждения"
+        android:textSize="14sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:gravity="center"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Текущий PIN -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Текущий PIN-код"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:layout_marginBottom="12dp"
+        android:gravity="center" />
+
+    <!-- Контейнер для текущего PIN -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="32dp">
+
+        <EditText
+            android:id="@+id/current_pin_1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+        <EditText
+            android:id="@+id/current_pin_2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+        <EditText
+            android:id="@+id/current_pin_3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+        <EditText
+            android:id="@+id/current_pin_4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+    </LinearLayout>
+
+    <!-- Новый PIN -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Новый PIN-код"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:layout_marginBottom="12dp"
+        android:gravity="center" />
+
+    <!-- Контейнер для нового PIN -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <EditText
+            android:id="@+id/new_pin_1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+        <EditText
+            android:id="@+id/new_pin_2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+        <EditText
+            android:id="@+id/new_pin_3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+        <EditText
+            android:id="@+id/new_pin_4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+    </LinearLayout>
+
+    <!-- Подтверждение нового PIN -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Подтвердите новый PIN-код"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnSurface"
+        android:layout_marginBottom="12dp"
+        android:gravity="center" />
+
+    <!-- Контейнер для подтверждения PIN -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp">
+
+        <EditText
+            android:id="@+id/confirm_pin_1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+        <EditText
+            android:id="@+id/confirm_pin_2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+        <EditText
+            android:id="@+id/confirm_pin_3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+        <EditText
+            android:id="@+id/confirm_pin_4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:inputType="numberPassword"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:cursorVisible="false"
+            android:layout_margin="4dp" />
+
+    </LinearLayout>
+
+    <!-- Сообщение об ошибке -->
+    <TextView
+        android:id="@+id/error_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="12sp"
+        android:textColor="@color/gray"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone" />
+
+    <!-- Подсказка -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Введите 4 цифры для каждого поля"
+        android:textSize="12sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp" />
+
+</LinearLayout>

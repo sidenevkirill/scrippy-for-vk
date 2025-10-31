@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MaterialAlertDialog_Rounded" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="background">@color/white</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.Material3</item>
+    </style>
+
+    <style name="ExoMediaButton" parent="android:Widget.ImageButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="ExoMediaButton.Play">
+        <item name="android:src">@drawable/play_black</item>
+    </style>
+
+    <style name="ExoMediaButton.Pause">
+        <item name="android:src">@drawable/plus</item>
+    </style>
+
+    <style name="ExoMediaButton.Previous">
+        <item name="android:src">@drawable/play_black</item>
+    </style>
+
+    <style name="ExoMediaButton.Next">
+        <item name="android:src">@drawable/plus</item>
+    </style>
+
+    <style name="ExoMediaButton.Rewind">
+        <item name="android:src">@drawable/play_black</item>
+    </style>
+
+    <style name="ExoMediaButton.FastForward">
+        <item name="android:src">@drawable/plus</item>
+    </style>
+
+    <style name="ExoMediaButton.Fullscreen">
+        <item name="android:src">@drawable/play_black</item>
+    </style>
+
+    <style name="ExoMediaButton.Settings">
+        <item name="android:src">@drawable/plus</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.CornerSize50Percent" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.CornerSize10Percent" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10%</item>
+    </style>
+</resources>

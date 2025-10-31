@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_top"
+    android:orientation="vertical"
+    android:paddingRight="8dp"
+    android:paddingLeft="8dp" >
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="18sp"
+        android:background="@drawable/minus"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp"/>
+
+    <TextView
+        android:id="@+id/buttonSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сохранить"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/save_black"
+        android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/buttonDownload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Скачать"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/arrow_down"
+        android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/buttonAlbum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Удалить"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/close"
+        android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/buttonEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Редактировать"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/edit_24px"
+        android:drawablePadding="8dp"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/buttonSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Найти исполнителя"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/buttonCopy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Скоропировать"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/content_copy"
+        android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/buttonShare"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Отправить"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/chat_outline"
+        android:drawablePadding="8dp"/>
+
+    <Button
+        android:id="@+id/buttonAddToPlaylist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Добавить в плейлист"
+        android:visibility="gone"
+        android:layout_marginBottom="0dp"/>
+
+    <Button
+        android:id="@+id/buttonOpenAlbum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Открыть альбом"
+        android:visibility="gone"
+        android:layout_marginBottom="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/buttonShareFriend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Поделиться"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/share_black"
+        android:drawablePadding="8dp"/>
+
+    <TextView
+        android:id="@+id/buttonOpenLyrics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Текст песни"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/format_text"
+        android:drawablePadding="8dp"/>
+
+</LinearLayout>

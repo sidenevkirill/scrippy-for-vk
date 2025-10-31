@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/sort_variant"
+        android:title="Сортировка"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_download_all"
+        android:icon="@drawable/save_black"
+        android:title="Скачать все"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_add_to_queue"
+        android:icon="@drawable/shuffle"
+        android:title="Добавить в очередь"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_share"
+        android:icon="@drawable/share_black"
+        android:title="Поделиться"
+        app:showAsAction="ifRoom" />
+
+</menu>

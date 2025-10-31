@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <!-- Avatar with online status -->
+    <RelativeLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp">
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/accoun_oval"
+            android:padding="8dp" />
+
+        <!-- Online indicator -->
+        <View
+            android:id="@+id/onlineIndicator"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/online_circle"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
+
+    <!-- Chat info -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp">
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Имя пользователя"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/lastMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Последнее сообщение"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+    </LinearLayout>
+
+    <!-- Time and unread badge -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12:30"
+            android:textSize="12sp"
+            android:textColor="#999999" />
+
+        <!-- Unread message badge -->
+        <LinearLayout
+            android:id="@+id/unreadBadge"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/unread_badge_background"
+            android:gravity="center"
+            android:layout_below="@id/time"
+            android:layout_marginTop="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/unreadCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textSize="10sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Header Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="32dp"
+            android:layout_marginTop="16dp">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@mipmap/ic_launcher"
+                android:layout_marginBottom="16dp"
+                app:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SCRIPPY"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.02"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Вход с помощью токена"
+                android:textColor="@color/white_alpha_80"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <!-- Test Mode Section (Visible only in DEBUG) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_test_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/test_mode_background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🧪 Тестовый режим"
+                    android:textColor="@color/test_mode_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Для тестирования приложения"
+                    android:textColor="@color/test_mode_text"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_fill_test"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Заполнить"
+                        android:textSize="12sp"
+                        android:layout_marginEnd="8dp"
+                        android:backgroundTint="@color/green_500"
+                        android:textColor="@color/white" />
+
+                    <Button
+                        android:id="@+id/btn_demo_mode"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Демо"
+                        android:textSize="12sp"
+                        android:layout_marginStart="8dp"
+                        android:backgroundTint="@color/blue_500"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Login Form Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            app:cardBackgroundColor="@color/white"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <!-- Username Field -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/input.layout.password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxStrokeColor="@color/black"
+                    android:layout_marginBottom="16dp"
+                    app:startIconDrawable="@drawable/account_outline"
+                    app:startIconTint="@color/black">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tokenEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Введите токен"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:textColor="@color/text_primary"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 2FA Code Section -->
+                <LinearLayout
+                    android:id="@+id/ll_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Двухфакторная аутентификация"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxStrokeColor="@color/black"
+                        app:startIconDrawable="@drawable/lock_outline"
+                        app:startIconTint="@color/black">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_code"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Код из приложения"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <!-- Classic Captcha Section -->
+                <LinearLayout
+                    android:id="@+id/ll_captcha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Введите капчу"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <ImageView
+                        android:id="@+id/iv_captcha"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="12dp"
+                        android:scaleType="fitCenter"
+                        android:background="@drawable/bg_captcha"
+                        android:padding="8dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxStrokeColor="@color/color_primary"
+                        app:startIconTint="@color/color_primary">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_captcha_key"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Текст с картинки"
+                            android:inputType="textCapCharacters"
+                            android:maxLines="1"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <!-- New VK Captcha Section -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/ll_new_captcha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Решите новую капчу ВКонтакте"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:layout_marginBottom="16dp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider"
+                            android:layout_marginBottom="16dp" />
+
+                        <WebView
+                            android:id="@+id/webViewCaptcha"
+                            android:layout_width="match_parent"
+                            android:layout_height="400dp"
+                            android:background="@color/surface"
+                            tools:ignore="WebViewLayout" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_retry_captcha"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Продолжить"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="20dp"
+                            app:cornerRadius="12dp"
+                            app:backgroundTint="@color/color_primary"
+                            android:textColor="@color/white"
+                            android:paddingStart="32dp"
+                            android:paddingEnd="32dp" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Login Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/useTokenButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Войти"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:boxStrokeColor="@color/black"
+                    app:cornerRadius="16dp"
+                    app:backgroundTint="#E4E4E4"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="6dp"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp" />
+
+                <!-- Progress Bar -->
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progress_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:visibility="gone"
+                    app:indicatorColor="@color/color_primary"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Quick Actions -->
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </LinearLayout>
+</ScrollView>

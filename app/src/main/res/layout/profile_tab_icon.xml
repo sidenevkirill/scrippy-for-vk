@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="4dp">
+
+    <ImageView
+        android:id="@+id/profile_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/profile_tab_bg"
+        android:src="@drawable/ic_profile_placeholder" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Профиль"
+        android:textSize="10sp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:layout_marginTop="2dp" />
+
+</LinearLayout>

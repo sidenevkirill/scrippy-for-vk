@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="4dp"
+    android:paddingHorizontal="16dp"
+    android:gravity="start">
+
+    <!-- Аватарка отправителя -->
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/accoun_oval"
+        android:layout_marginEnd="8dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="start"
+        android:paddingHorizontal="8dp">
+
+        <!-- Имя отправителя (только для чужих сообщений) -->
+        <TextView
+            android:id="@+id/senderName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scrippy - Чат бот"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:textStyle="bold"
+            android:paddingBottom="2dp" />
+
+        <!-- Контейнер сообщения -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:background="@drawable/bubble_incoming"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
+            android:minWidth="60dp"
+            android:maxWidth="280dp">
+
+            <TextView
+                android:id="@+id/messageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Сообщение друга"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                android:lineSpacingExtra="2dp" />
+
+        </LinearLayout>
+
+        <!-- Время для чужих сообщений (под сообщением) -->
+        <TextView
+            android:id="@+id/messageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12:30"
+            android:textSize="10sp"
+            android:textColor="#999999"
+            android:paddingTop="2dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

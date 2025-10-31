@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:icon="@drawable/lock_outline"
+        android:id="@+id/action_show_unlock"
+        android:title="Подписка"
+        app:showAsAction="always"
+        android:visible="false" />
+
+    <item
+        android:icon="@drawable/playlist_music_outline"
+        android:id="@+id/action_show_save"
+        android:title="Загрузки"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_show_search"
+        android:icon="@drawable/ic_search"
+        android:title="Поиск"
+        app:showAsAction="always"/>
+
+</menu>

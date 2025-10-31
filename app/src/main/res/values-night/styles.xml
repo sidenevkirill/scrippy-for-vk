@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_out</item>
+    </style>
+
+    <style name="Wellcome.AppTheme" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimaryDark">#ffffff</item>
+    </style>
+
+    <style name="FullScreenBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+    </style>
+
+    <style name="MaterialAlertDialog_Rounded" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="background">@color/white</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.Material3</item>
+    </style>
+
+</resources>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="icon">#ffffff</color>
+    <color name="black">#FFFFFF</color>
+    <color name="color_tabs">#E4E4E4</color>
+    <color name="color_primary">#141218</color>
+    <color name="color_send">#211F26</color>
+    <color name="card">#211F26</color>
+    <color name="list_bg">#1e1f24</color>
+    <color name="white">#000000</color>
+    <color name="circle_oval">#424242</color>
+    <color name="tab_text">#ffffff</color>
+    <color name="card_video">#1B2931</color>
+    <color name="bg_search">#211F26</color>
+    <color name="bg_view">#CC757575</color>
+    <color name="seekbar_thumb">#FF5722</color>
+    <color name="seekbar_progress">#4CAF50</color>
+    <color name="seekbar_background">#BDBDBD</color>
+    <color name="gray">#808080</color>
+    <color name="primary">#3F51B5</color>
+    <color name="red">#F44336</color>
+    <color name="current_track_bg">#E3F2FD</color>
+    <color name="current_track_text">#1976D2</color>
+    <color name="oval">#454545</color>
+    <color name="bg_tab">#3A3A3A</color>
+
+    <color name="light_gray">#242424</color>
+    <color name="spinner_light_stroke">#212026</color>
+    <color name="player_background">#FF121212</color>
+    <color name="player_text_primary">#FFFFFFFF</color>
+    <color name="player_text_secondary">#B3FFFFFF</color>
+    <color name="active_control">#FF1DB954</color>
+    <color name="inactive_control">#55FFFFFF</color>
+
+    <color name="attachment_text_color">#333333</color>
+    <color name="attachment_secondary_text">#666666</color>
+    <color name="attachment_background_color">#F5F5F5</color>
+    <color name="attachment_border_color">#E0E0E0</color>
+
+    <!-- Основные цвета -->
+    <color name="text_primary">#212121</color>
+    <color name="surface">#FAFAFA</color>
+    <color name="divider">#E0E0E0</color>
+
+    <!-- Прозрачные цвета -->
+    <color name="white_alpha_80">#CCFFFFFF</color>
+    <color name="white_alpha_70">#B3FFFFFF</color>
+    <color name="white_alpha_60">#99FFFFFF</color>
+    <color name="white_alpha_30">#4DFFFFFF</color>
+    <color name="white_alpha_20">#33FFFFFF</color>
+
+    <!-- Тестовый режим -->
+    <color name="test_mode_background">#FFF9C4</color>
+    <color name="test_mode_text">#5D4037</color>
+
+    <!-- Дополнительные цвета -->
+    <color name="green_500">#4CAF50</color>
+    <color name="blue_500">#2196F3</color>
+    <color name="red_500">#F44336</color>
+
+    <!-- Фоны чата -->
+    <color name="background_default">#1F1F1F</color>
+    <color name="background_dark">#121212</color>
+    <color name="background_light">#F5F5F5</color>
+    <color name="background_blue_gradient_start">#1E3C72</color>
+    <color name="background_blue_gradient_end">#2A5298</color>
+    <color name="background_purple_gradient_start">#667eea</color>
+    <color name="background_purple_gradient_end">#764ba2</color>
+    <color name="background_green_gradient_start">#11998e</color>
+    <color name="background_green_gradient_end">#38ef7d</color>
+    <color name="background_orange_gradient_start">#ff9a00</color>
+    <color name="background_orange_gradient_end">#ff5e00</color>
+
+    <!-- Дополнительные цвета -->
+    <color name="dark_gray">#404040</color>
+
+    <!-- Цвета для сообщений -->
+    <color name="message_bubble_outgoing">#E3F2FD</color>
+    <color name="message_bubble_incoming">#FFFFFF</color>
+    <color name="message_text_outgoing">#000000</color>
+    <color name="message_text_incoming">#000000</color>
+    <color name="message_time_text">#757575</color>
+
+    <!-- Цвета фона для иконок документов -->
+    <color name="document_icon_bg_default">#FF9AA6</color>
+    <color name="document_icon_bg_pdf">#FABAC3</color>
+    <color name="document_icon_bg_word">#7CC8FA</color>
+    <color name="document_icon_bg_excel">#B9FBB9</color>
+    <color name="document_icon_bg_powerpoint">#FDEEA7</color>
+    <color name="document_icon_bg_archive">#F3E5F5</color>
+    <color name="document_icon_bg_apk">#3F51B5</color>
+    <color name="document_icon_bg_image_blue">#1EA1FF</color>
+    <color name="document_icon_bg_image">#9BDFFF</color>
+    <color name="document_icon_bg_audio">#FDEEA7</color>
+    <color name="document_icon_bg_video">#FDEEA7</color>
+
+    <!-- Дополнительные цвета -->
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_500">#9E9E9E</color>
+    <color name="gray_600">#757575</color>
+</resources>

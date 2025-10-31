@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/color_primary"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 1. SwipeRefreshLayout должен быть корневым для жеста обновления -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 2. NestedScrollView или RecyclerView для координации прокрутки -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/appBarLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/color_primary"
+                    app:elevation="0dp">
+
+                    <com.google.android.material.appbar.CollapsingToolbarLayout
+                        android:id="@+id/collapsingToolbarLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                        app:titleEnabled="false">
+
+                        <androidx.appcompat.widget.Toolbar
+                            android:id="@+id/toolbar"
+                            android:layout_width="match_parent"
+                            android:layout_height="?attr/actionBarSize"
+                            app:layout_collapseMode="pin"
+                            app:menu="@menu/menu_playlists"
+                            app:navigationIcon="@drawable/arrow_left_black"
+                            android:background="@color/color_primary"
+                            app:title="Аудиозаписи"
+                            app:titleTextColor="@color/color_tabs" />
+
+                        <LinearLayout
+                            android:id="@+id/playlistsSection"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="00dp"
+                            android:orientation="horizontal">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewPlaylists"
+                            android:layout_width="match_parent"
+                            android:layout_height="190dp"
+                            android:layout_marginTop="70dp"
+                            android:paddingLeft="6dp"
+                            android:orientation="horizontal"
+                            android:overScrollMode="never"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_playlist_horizontal" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+                    <!-- 3. Вынес заголовок и кнопки в AppBarLayout для правильной анимации -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_scrollFlags="scroll">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="@dimen/content_padding"
+                            android:paddingTop="16dp"
+                            android:paddingEnd="@dimen/content_padding"
+                            android:paddingBottom="16dp">
+
+                            <TextView
+                                android:id="@+id/count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Треки"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="?android:textColorSecondary"
+                                android:textSize="@dimen/text_size_medium" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1" />
+
+                            <ImageView
+                                android:id="@+id/shuffle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:background="?selectableItemBackgroundBorderless"
+                                app:srcCompat="@drawable/shuffle" />
+
+                            <Space
+                                android:layout_width="@dimen/content_padding"
+                                android:layout_height="0dp" />
+
+                            <ImageView
+                                android:id="@+id/sort"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="?selectableItemBackgroundBorderless"
+                                android:paddingTop="0dp"
+                                app:srcCompat="@drawable/sort_variant" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:alpha="0.6"
+                            android:background="@color/bg_view" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="8dp" />
+                    </LinearLayout>
+
+                </com.google.android.material.appbar.AppBarLayout>
+
+                <!-- 4. Основной контент -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/friendsRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_track" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- 5. Статус поверх всего -->
+    <TextView
+        android:id="@+id/statusTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Загрузка друзей"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/playlistsProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

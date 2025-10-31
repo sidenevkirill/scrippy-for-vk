@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="initial_colors">
+        <item>#FF5733</item>
+        <item>#33FF57</item>
+        <item>#3357FF</item>
+        <item>#F033FF</item>
+        <item>#FF33A8</item>
+        <item>#33FFF5</item>
+        <item>#B833FF</item>
+        <item>#FFBD33</item>
+    </array>
+</resources>

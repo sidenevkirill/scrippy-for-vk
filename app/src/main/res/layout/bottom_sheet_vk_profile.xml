@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_top"
+    android:padding="16dp">
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="18sp"
+        android:background="@drawable/minus"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp"/>
+
+    <TextView
+        android:id="@+id/copyId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Копировать ID"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/content_copy"
+        android:drawablePadding="8dp"/>
+
+    <TextView
+        android:id="@+id/copyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Копировать ссылку"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/link_variant"
+        android:drawablePadding="8dp"/>
+
+    <TextView
+        android:id="@+id/copyToken"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Скопировать токен"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/content_copy"
+        android:drawablePadding="8dp"/>
+
+    <TextView
+        android:id="@+id/shareButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Поделиться профилем"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/share_black"
+        android:drawablePadding="8dp"/>
+
+    <TextView
+        android:id="@+id/refreshButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Обновить профиль"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/refresh"
+        android:drawablePadding="8dp"/>
+
+    <TextView
+        android:id="@+id/openInBrowserButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Открыть в браузере"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/earth"
+        android:drawablePadding="8dp"/>
+
+</LinearLayout>

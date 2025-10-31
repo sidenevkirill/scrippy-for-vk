@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="85dp"
+    android:layout_height="120dp"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/light_gray"
+    app:strokeWidth="0.5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <!-- Free Badge -->
+        <View
+            android:id="@+id/freeBadge"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/unread_badge_background"
+            android:visibility="gone" />
+
+        <!-- Gift Image -->
+        <ImageView
+            android:id="@+id/giftImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:scaleType="fitCenter" />
+
+        <!-- Gift Name -->
+        <TextView
+            android:id="@+id/giftName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/giftImage"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="Название"
+            android:textColor="@color/black"
+            android:textSize="10sp" />
+
+        <!-- Gift Price -->
+        <TextView
+            android:id="@+id/giftPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:text="100 монет"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

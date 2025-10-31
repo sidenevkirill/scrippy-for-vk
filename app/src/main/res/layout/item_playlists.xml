@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/audio_item"
+    android:layout_width="match_parent"
+    android:layout_height="74dp"
+    android:paddingRight="0dp"
+    android:paddingLeft="0dp"
+    android:background="?android:selectableItemBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/coverImageView"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_gravity="center_vertical"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/circle_playlist"
+            app:shapeAppearanceOverlay="@style/CustomShapeImagePlaylist"/>
+
+    <LinearLayout
+        android:id="@+id/audio.titles.container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="16sp"
+                tools:text="Let Go" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="2dp" />
+
+        <TextView
+            android:id="@+id/artistText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="?android:textColorSecondary"
+            tools:text="From Ashes to New" />
+
+    </LinearLayout>
+
+    <include layout="@layout/overflow"/>
+
+</LinearLayout>

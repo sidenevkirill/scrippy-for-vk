@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_background_menu"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/option_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Поделиться"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:drawableStart="@drawable/share_black"
+        android:drawablePadding="12dp"
+        android:gravity="center_vertical"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="4dp"
+        android:background="#E0E0E0"/>
+
+    <TextView
+        android:id="@+id/option_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сохранить"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:drawableStart="@drawable/save_black"
+        android:drawablePadding="12dp"
+        android:gravity="center_vertical"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="4dp"
+        android:background="#E0E0E0"/>
+
+    <TextView
+        android:id="@+id/option_report"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Пожаловаться"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:drawableStart="@drawable/alert_circle_outline"
+        android:drawablePadding="12dp"
+        android:gravity="center_vertical"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="4dp"
+        android:background="#E0E0E0"/>
+
+    <TextView
+        android:id="@+id/option_copy_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Скопировать сслыку"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:drawableStart="@drawable/content_copy"
+        android:drawablePadding="12dp"
+        android:gravity="center_vertical"/>
+</LinearLayout>

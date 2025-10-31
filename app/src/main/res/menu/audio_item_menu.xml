@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_copy_url"
+        android:title="Копировать ссылку" />
+    <item
+        android:id="@+id/menu_share"
+        android:title="Поделиться ссылкой" />
+    <item
+        android:id="@+id/menu_share_chat"
+        android:title="Отправить в диалог" />
+    <item
+        android:id="@+id/menu_share_friends"
+        android:title="Поделиться с друзьями" />
+    <item
+        android:id="@+id/menu_downloads"
+        android:title="Скачать" />
+</menu>

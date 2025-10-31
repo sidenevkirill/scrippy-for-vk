@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Solid background -->
+    <solid android:color="@color/color_primary" />
+
+    <!-- Большая обводка -->
+    <stroke
+        android:width="1dp"
+        android:color="@color/divider" />
+
+    <!-- Скругленные углы -->
+    <corners android:radius="16dp" />
+
+    <!-- Отступы чтобы контент не залезал на обводку -->
+    <padding
+        android:left="2dp"
+        android:top="2dp"
+        android:right="2dp"
+        android:bottom="2dp" />
+
+</shape>

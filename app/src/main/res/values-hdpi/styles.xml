@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MaterialAlertDialog_Rounded" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="background">@color/white</item>
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.Material3</item>
+    </style>
+</resources>

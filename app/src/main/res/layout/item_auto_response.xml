@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="4dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true"
+    android:background="@drawable/bg_card"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Predefined Indicator -->
+            <View
+                android:id="@+id/predefinedIndicator"
+                android:layout_width="4dp"
+                android:layout_height="20dp"
+                android:background="@color/black"
+                android:visibility="gone"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/tvKeyword"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ключевое слово"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchActive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <!-- Category Badge -->
+        <TextView
+            android:id="@+id/categoryBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Категория"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="2dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- Response -->
+        <TextView
+            android:id="@+id/tvResponse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Ответ"
+            android:textSize="14sp"
+            android:textColor="@color/gray"
+            android:lineSpacingExtra="4dp"
+            android:maxLines="3"
+            android:ellipsize="end" />
+
+        <!-- Hidden category field for logic -->
+        <TextView
+            android:id="@+id/tvCategory"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+
+        <!-- Actions Layout -->
+        <LinearLayout
+            android:id="@+id/actionsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="12dp"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/btnEdit"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/edit_24px"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Редактировать"
+                app:tint="@color/black" />
+
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Удалить"
+                android:layout_marginStart="8dp"
+                app:tint="@color/red" />
+
+        </LinearLayout>
+
+        <!-- User Response Indicator -->
+        <TextView
+            android:id="@+id/userResponseIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:text="Ваш ответ"
+            android:textSize="10sp"
+            android:textColor="@color/black"
+            android:background="@drawable/msg_you"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</LinearLayout>

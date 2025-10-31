@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/songs.header.shuffle"
+    android:background="?android:windowBackground"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:columnCount="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/download"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_margin="6dp"
+            android:backgroundTint="#ffffff"
+            android:text="Скопировать"
+            android:textColor="?attr/colorOnSurface"
+            app:backgroundTintMode="add"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/content_copy"
+            app:iconGravity="top"
+            app:iconPadding="5dp"
+            app:iconTint="?attr/colorOnSurface" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:backgroundTint="#ffffff"
+            android:layout_margin="6dp"
+            android:text="Поделиться"
+            android:textColor="?attr/colorOnSurface"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/share_outline"
+            app:iconGravity="top"
+            app:iconPadding="5dp"
+            app:iconTint="?attr/colorOnSurface" />
+    </GridLayout>
+
+</LinearLayout>

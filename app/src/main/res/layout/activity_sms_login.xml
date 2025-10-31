@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <EditText
+        android:id="@+id/et_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="+7 (XXX) XXX-XX-XX"
+        android:inputType="phone"
+        android:maxLines="1"/>
+
+    <Button
+        android:id="@+id/btn_request_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get SMS code"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/et_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="SMS code"
+        android:inputType="number"
+        android:maxLines="1"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Confirm"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

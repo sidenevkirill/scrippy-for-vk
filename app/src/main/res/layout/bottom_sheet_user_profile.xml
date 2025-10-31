@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:paddingBottom="12dp"
+    android:background="@drawable/bg_top"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:id="@+id/privacy_polic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/img_close"
+            android:layout_width="55dp"
+            android:layout_height="30dp"
+            android:src="@drawable/minus" />
+
+    </LinearLayout>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/qrCodeImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:contentDescription="@null"
+        android:layout_gravity="center"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/rounded_background"
+        app:shapeAppearanceOverlay="@style/CustomShapeImagePlaylist"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/copyButton"
+        android:alpha="0.7"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:paddingBottom="5dp"
+        android:gravity="center"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Скопировать ссылку"
+        android:layout_marginLeft="2dp"
+        android:textAppearance="?android:textAppearanceSmall" />
+
+    <Button
+        android:id="@+id/copyId"
+        android:alpha="0.7"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:paddingBottom="5dp"
+        android:gravity="center"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Скопировать ID"
+        android:layout_marginLeft="2dp"
+        android:textAppearance="?android:textAppearanceSmall" />
+
+    <Button
+        android:id="@+id/share"
+        android:alpha="0.7"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables"
+        android:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:paddingBottom="5dp"
+        android:gravity="center"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Поделиться профилем"
+        android:textColor="@color/white"
+        android:layout_marginLeft="2dp"
+        android:textAppearance="?android:textAppearanceSmall" />
+
+</LinearLayout>

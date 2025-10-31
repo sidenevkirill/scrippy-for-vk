@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_filter_all"
+        android:title="Все вложения" />
+
+    <item
+        android:id="@+id/menu_filter_photos"
+        android:title="Фотографии" />
+
+    <item
+        android:id="@+id/menu_filter_audio"
+        android:title="Аудиозаписи" />
+
+    <item
+        android:id="@+id/menu_filter_documents"
+        android:title="Документы" />
+
+    <item
+        android:id="@+id/menu_filter_voice"
+        android:title="Голосовые"
+        />
+</menu>

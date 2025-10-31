@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/shuffle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/content_padding"
+        android:paddingTop="@dimen/content_padding_half"
+        android:paddingRight="@dimen/content_padding"
+        android:paddingBottom="@dimen/content_padding_half">
+
+        <TextView
+            android:id="@+id/songs.header.count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="@dimen/text_size_medium"
+            tools:text="2133 songs" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/songs.header.shuffle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/content_padding_half"
+            app:srcCompat="@drawable/shuffle" />
+
+        <Space
+            android:layout_width="@dimen/content_padding"
+            android:layout_height="0dp" />
+
+        <ImageView
+            android:id="@+id/songs.header.sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/content_padding_half"
+            app:srcCompat="@drawable/menu" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:alpha="0.6"
+        android:background="#BDBDBD" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="8dp" />
+</LinearLayout>

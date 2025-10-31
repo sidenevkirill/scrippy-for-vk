@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/color_primary">
+
+    <!-- Content -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/color_primary"
+        app:layout_constraintBottom_toTopOf="@id/player"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Header -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_primary"
+            android:elevation="0dp"
+            app:elevation="0dp">
+
+            <!-- Основной контент профиля - будет скрываться -->
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsingToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@color/color_primary"
+                app:scrimAnimationDuration="600"
+                app:expandedTitleGravity="top|start"
+                android:background="@color/color_primary"
+                android:elevation="0dp"
+                app:elevation="0dp"
+                app:expandedTitleTextColor="@android:color/transparent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                app:statusBarScrim="@android:color/transparent">
+
+                <!-- Content -->
+                <androidx.cardview.widget.CardView
+                    app:cardBackgroundColor="@android:color/transparent"
+                    android:background="@color/color_primary"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="0dp"
+                    android:layout_marginTop="0dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    android:id="@+id/header"
+                    app:layout_collapseMode="parallax">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:background="@color/color_primary">
+
+                        <!-- Cover -->
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:background="@color/color_primary"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginLeft="1dp"
+                            android:layout_marginRight="1dp"
+                            android:layout_marginTop="1dp"
+                            android:id="@+id/cover"
+                            android:layout_height="150dp"
+                            android:layout_width="match_parent" />
+
+                        <!-- Cover foreground -->
+                        <androidx.appcompat.widget.AppCompatImageView
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@id/cover"
+                            android:background="@color/color_primary"
+                            android:layout_height="24dp"
+                            android:layout_width="0dp"
+                            android:id="@+id/coverForeground"/>
+
+                        <!-- Большая аватарка (круглая) -->
+                        <RelativeLayout
+                            android:layout_width="92dp"
+                            android:layout_height="92dp"
+                            android:layout_gravity="end"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/coverForeground"
+                            app:layout_constraintBottom_toTopOf="@id/coverForeground"
+                            android:id="@+id/avatar"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <RelativeLayout
+                                android:layout_width="96dp"
+                                android:layout_height="96dp"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:background="@drawable/square"
+                                android:orientation="horizontal">
+
+                                <com.google.android.material.imageview.ShapeableImageView
+                                    android:id="@+id/user_avatars"
+                                    android:layout_width="90dp"
+                                    android:layout_height="90dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/oval_account"
+                                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.CornerSize50Percent" />
+
+                                <ImageView
+                                    android:id="@+id/add_friend_icon"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_marginLeft="4dp"
+                                    android:layout_gravity="center"
+                                    android:visibility="gone"
+                                    android:background="@drawable/check_circle" />
+                            </RelativeLayout>
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linear"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/avatar"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginHorizontal="10dp"
+                            android:gravity="center"
+                            android:text="name"
+                            android:textSize="16sp"
+                            android:textColor="@color/black">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/user_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:singleLine="true"
+                                android:layout_marginLeft="8dp"
+                                android:textSize="16sp"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="?android:textColorPrimary"
+                                android:gravity="center_vertical"
+                                android:includeFontPadding="false"
+                                tools:text="Сиденёв Кирилл" />
+
+                            <ImageView
+                                android:id="@+id/verified_icon"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginLeft="2dp"
+                                android:layout_gravity="center"
+                                android:visibility="visible" />
+
+                            <TextView
+                                android:id="@+id/audio_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:visibility="gone"
+                                android:gravity="center_vertical"
+                                android:includeFontPadding="false"
+                                android:text="01/03"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/players_artist"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="25dp"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:orientation="horizontal"
+                            android:paddingBottom="5dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/linear"
+                            app:layout_constraintVertical_bias="0.04"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/artistsNamesText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginTop="4dp"
+                                android:alpha="0.7"
+                                android:text="В сети"
+                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textColor="@color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/color_primary"
+                            android:paddingStart="16dp"
+                            android:paddingEnd="16dp"
+                            android:layout_marginTop="46dp"
+                            app:layout_constraintTop_toBottomOf="@id/players_artist"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="0dp"
+                            android:orientation="vertical"
+                            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
+
+                            <GridLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:columnCount="4"
+                                android:rowCount="2">
+
+                                <!-- Первая строка: 4 элемента -->
+
+                                <!-- Кнопка друзей с счетчиком -->
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/friends_sum"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_row="0"
+                                    android:layout_column="0"
+                                    android:layout_rowWeight="1"
+                                    android:layout_columnWeight="1"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="Друзья\n0"
+                                    android:textColor="@color/black"
+                                    android:textSize="11sp"
+                                    android:gravity="center"
+                                    android:singleLine="false"
+                                    android:lines="2"
+                                    android:maxLines="2"
+                                    android:stateListAnimator="@null"
+                                    app:cornerRadius="8dp"
+                                    app:icon="@drawable/item_friends"
+                                    app:iconGravity="textTop"
+                                    app:iconPadding="4dp"
+                                    app:iconSize="18dp"
+                                    app:iconTint="@color/black"
+                                    style="@style/Widget.Material3.Button.TextButton" />
+
+                                <!-- Кнопка групп с счетчиком -->
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/groups_sum"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_row="0"
+                                    android:layout_column="1"
+                                    android:layout_rowWeight="1"
+                                    android:layout_columnWeight="1"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="Группы\n0"
+                                    android:textColor="@color/black"
+                                    android:textSize="11sp"
+                                    android:gravity="center"
+                                    android:singleLine="false"
+                                    android:lines="2"
+                                    android:maxLines="2"
+                                    android:stateListAnimator="@null"
+                                    app:cornerRadius="8dp"
+                                    app:icon="@drawable/groups_24px"
+                                    app:iconGravity="textTop"
+                                    app:iconPadding="4dp"
+                                    app:iconSize="18dp"
+                                    app:iconTint="@color/black"
+                                    style="@style/Widget.Material3.Button.TextButton" />
+
+                                <!-- Кнопка музыки с счетчиком -->
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/music_sum"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_row="0"
+                                    android:layout_column="2"
+                                    android:layout_rowWeight="1"
+                                    android:layout_columnWeight="1"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="Музыка\n0"
+                                    android:textColor="@color/black"
+                                    android:textSize="11sp"
+                                    android:gravity="center"
+                                    android:singleLine="false"
+                                    android:lines="2"
+                                    android:maxLines="2"
+                                    android:stateListAnimator="@null"
+                                    app:cornerRadius="8dp"
+                                    app:icon="@drawable/music_note_outline"
+                                    app:iconGravity="textTop"
+                                    app:iconPadding="4dp"
+                                    app:iconSize="18dp"
+                                    app:iconTint="@color/black"
+                                    style="@style/Widget.Material3.Button.TextButton" />
+
+                                <!-- Кнопка подписчиков с счетчиком -->
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/followers_sum"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_row="0"
+                                    android:layout_column="3"
+                                    android:layout_rowWeight="1"
+                                    android:layout_columnWeight="1"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:layout_marginBottom="8dp"
+                                    android:visibility="gone"
+                                    android:text="Подписчики\n0"
+                                    android:textColor="#000000"
+                                    android:textSize="11sp"
+                                    android:gravity="center"
+                                    android:singleLine="false"
+                                    android:lines="3"
+                                    android:maxLines="3"
+                                    android:stateListAnimator="@null"
+                                    app:cornerRadius="8dp"
+                                    app:icon="@drawable/groups_24px"
+                                    app:iconGravity="textTop"
+                                    app:iconPadding="4dp"
+                                    app:iconSize="18dp"
+                                    app:iconTint="#000000"
+                                    style="@style/Widget.Material3.Button.TextButton" />
+
+                            </GridLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="25dp"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:maxLines="1"
+                            android:orientation="horizontal"
+                            android:paddingBottom="5dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/players_artist"
+                            app:layout_constraintVertical_bias="0.098"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/user_status"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="2dp"
+                                android:layout_marginTop="4dp"
+                                android:visibility="gone"
+                                android:alpha="0.7"
+                                android:text="ОНЛАЙН"
+                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textColor="@color/black" />
+
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_width="match_parent"
+                    app:layout_collapseMode="pin"
+                    app:navigationIcon="@drawable/arrow_left_black"
+                    app:menu="@menu/menu_account"
+                    app:title="Профиль"
+                    android:id="@+id/toolbar"/>
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/toolbar_avatar"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:visibility="invisible"
+                    android:alpha="0"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.CornerSize10Percent"
+                    android:scaleType="centerCrop" />
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_primary"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="8dp"
+                android:orientation="vertical"
+                app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/actionsGridLayout">
+
+                    <!-- Кнопка сообщения -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/download"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="@color/bg_tab"
+                        android:text="Написать"
+                        android:textColor="@color/black"
+                        android:textSize="11sp"
+                        android:stateListAnimator="@null"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/chat_outline"
+                        app:iconGravity="textTop"
+                        app:iconPadding="8dp"
+                        app:iconSize="20dp"
+                        app:iconTint="@color/black"
+                        style="@style/Widget.Material3.Button.TextButton" />
+
+                    <!-- Кнопка редактирования (вместо поделиться) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/save"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="@color/bg_tab"
+                        android:visibility="visible"
+                        android:text="В друзьях"
+                        android:textColor="@color/black"
+                        android:textSize="11sp"
+                        android:stateListAnimator="@null"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/account_multiple_check_outline"
+                        app:iconGravity="textTop"
+                        app:iconPadding="8dp"
+                        app:iconSize="18dp"
+                        app:iconTint="@color/black"
+                        style="@style/Widget.Material3.Button.TextButton" />
+
+
+                    <!-- Кнопка редактирования (вместо поделиться) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/music"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="@color/bg_tab"
+                        android:text="Звук"
+                        android:textColor="@color/black"
+                        android:textSize="11sp"
+                        android:stateListAnimator="@null"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/bell_outline"
+                        app:iconGravity="textTop"
+                        app:iconPadding="8dp"
+                        app:iconSize="18dp"
+                        app:iconTint="@color/black"
+                        style="@style/Widget.Material3.Button.TextButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/menu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="@color/bg_tab"
+                        android:visibility="visible"
+                        android:text="Еще"
+                        android:textColor="@color/black"
+                        android:textSize="11sp"
+                        android:stateListAnimator="@null"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/dots_horizontal"
+                        app:iconGravity="textTop"
+                        app:iconPadding="8dp"
+                        app:iconSize="18dp"
+                        app:iconTint="@color/black"
+                        style="@style/Widget.Material3.Button.TextButton" />
+
+                    <!-- Кнопка друзей -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/friends_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#F5F5F5"
+                        android:text="Друзья"
+                        android:visibility="gone"
+                        android:textColor="#000000"
+                        android:textSize="11sp"
+                        android:stateListAnimator="@null"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/item_friends"
+                        app:iconGravity="textTop"
+                        app:iconPadding="8dp"
+                        app:iconSize="18dp"
+                        app:iconTint="#000000"
+                        style="@style/Widget.Material3.Button.TextButton" />
+
+                    <!-- Кнопка групп -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/groups_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_rowWeight="1"
+                        android:layout_columnWeight="1"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="#F5F5F5"
+                        android:visibility="gone"
+                        android:text="Группы"
+                        android:textColor="#000000"
+                        android:textSize="11sp"
+                        android:stateListAnimator="@null"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/group_24px"
+                        app:iconGravity="textTop"
+                        app:iconPadding="8dp"
+                        app:iconSize="18dp"
+                        app:iconTint="#000000"
+                        style="@style/Widget.Material3.Button.TextButton" />
+
+                </GridLayout>
+            </LinearLayout>
+
+            <!-- TabLayout - тоже будет скрываться -->
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabBackground="@color/color_primary"
+                app:tabIndicator="@drawable/selected_chip_background"
+                app:tabIndicatorColor="@color/bg_tab"
+                app:tabIndicatorFullWidth="true"
+                app:tabIndicatorGravity="stretch"
+                android:background="@color/color_primary"
+                android:layout_marginTop="0dp"
+                app:contentScrim="@color/color_primary"
+                android:textDirection="locale"
+                app:tabIndicatorHeight="2dp"
+                android:paddingRight="2dp"
+                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+                android:paddingLeft="0dp"
+                app:tabSelectedTextColor="?colorAccent"
+                app:tabGravity="fill"
+                app:tabMode="fixed"
+                app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ФОТО" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ПОДАРКИ" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.6"
+                android:background="@color/bg_view"
+                app:layout_scrollFlags="scroll|enterAlways" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <FrameLayout
+            android:id="@+id/progressBarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_primary"
+            android:elevation="6dp"
+            android:visibility="gone">
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/playlistIsEmptyText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_primary"
+            android:gravity="center"
+            android:text="fdsf"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:visibility="gone" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- Bottom player -->
+    <LinearLayout
+        android:id="@+id/player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

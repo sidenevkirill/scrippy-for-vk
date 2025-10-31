@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?android:selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="72dp"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingTop="8dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="8dp">
+
+
+    <!-- Контейнер для аватарки -->
+    <RelativeLayout
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp">
+
+        <View
+            android:id="@+id/story_border"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:background="@drawable/story_border_gradient" />
+
+        <!-- ImageView для загрузки аватарки -->
+        <ImageView
+            android:id="@+id/avatar_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/accoun_oval"
+            android:visibility="visible"/>
+
+        <!-- TextView для текстового аватара -->
+        <TextView
+            android:id="@+id/image_name"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+        <!-- Индикатор онлайн -->
+        <View
+            android:id="@+id/online_indicator"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/online_circle"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/important_icon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/star"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="16sp"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="?android:textColorPrimary"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                tools:text="Fullname" />
+
+            <ImageView
+                android:id="@+id/verified_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginLeft="4dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:src="@drawable/check_verif" />
+
+            <TextView
+                android:id="@+id/audio_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:text="01/03"/>
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/message_icon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="8dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/chat_outline"
+            android:contentDescription="Написать сообщение"
+            android:padding="2dp"
+            app:tint="#808080" />
+
+    </LinearLayout>
+
+</LinearLayout>

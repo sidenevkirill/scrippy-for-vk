@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_primary">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/color_primary">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:title="Меню"
+            app:titleTextColor="@color/color_tabs">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingEnd="16dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/profile_avatar"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="Аватар профиля"
+                    android:background="@drawable/default_avatar"
+                    app:shapeAppearanceOverlay="@style/CustomShapeImageAvatarMenu"
+                    android:padding="2dp"/>
+
+                <ImageView
+                    android:id="@+id/special_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/circle_shufle"
+                    android:layout_alignBottom="@id/profile_avatar"
+                    android:layout_alignRight="@id/profile_avatar"
+                    android:layout_marginRight="0dp"
+                    android:layout_marginBottom="-5dp"
+                    android:visibility="gone"
+                    android:elevation="4dp" />
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Меню"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/color_tabs"
+                    android:textSize="22sp" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+        <View
+            android:id="@+id/rv7"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#27000000" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@+id/menu_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="0dp">
+
+            <!-- Ваши элементы меню будут добавляться сюда -->
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

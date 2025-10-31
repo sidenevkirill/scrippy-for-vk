@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <size
+                android:width="46dp"
+                android:height="46dp" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/no_mp3_image_background" />
+    <item
+        android:drawable="@drawable/music_note_outline_white"
+        android:gravity="center" />
+</layer-list>

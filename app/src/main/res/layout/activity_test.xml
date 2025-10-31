@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff">
+
+    <ImageView
+        android:id="@+id/myLottie"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:background="@mipmap/ic_launcher" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MOOSIC"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:textColor="#000000"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Музыкальный плеер"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="?android:textColorSecondary"
+        />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:hintEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/loginEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Логин"
+                android:inputType="textEmailAddress"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:hintEnabled="true"
+            app:passwordToggleEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Пароль"
+                android:inputType="textPassword"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"/>
+
+
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_gravity="top"
+        android:paddingBottom="16dp">
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ВОЙТИ"
+            android:textColor="@android:color/white"/>
+
+        <Button
+            android:id="@+id/buttonEnterToken"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ВХОД ПО ТОКЕНУ" />
+
+        <Button
+            android:id="@+id/buttonVKLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:onClick="goVkAuth"
+            android:text="ВОЙТИ ЧЕРЕЗ БРАУЗЕР" />
+
+        <TextView
+            android:id="@+id/buttonVKLoginBrowser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="6dp"
+            android:textSize="16dp"
+            android:text="зарегистрироваться" />
+
+    </LinearLayout>
+    </LinearLayout>
+    </LinearLayout>

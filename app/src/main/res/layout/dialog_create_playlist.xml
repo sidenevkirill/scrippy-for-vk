@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="18sp"
+        android:background="@drawable/minus"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Новый плейлист"
+        android:textAlignment="center"
+        android:visibility="gone"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/input.layout.password"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        app:boxStrokeColor="?colorAccent"
+        app:hintTextColor="?colorAccent">
+
+        <EditText
+            android:id="@+id/playlist_name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Название плейлиста"
+            android:inputType="textCapSentences"
+            android:maxLines="1"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:boxStrokeColor="?colorAccent"
+        app:hintTextColor="?colorAccent">
+
+        <EditText
+            android:id="@+id/playlist_desc_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Описание плейлиста"
+            android:inputType="textCapSentences"
+            android:maxLines="1"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/cover_image_view"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CustomShapeImagePlaylist"/>
+
+    <Button
+        android:id="@+id/create_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Создать"/>
+
+    <Button
+        android:id="@+id/select_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"
+        android:text="Выбрать обложку"/>
+
+    <CheckBox
+        android:id="@+id/add_tracks_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Добавить треки из моих аудио"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tracks_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Выберите треки:"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tracks_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"/>
+
+</LinearLayout>

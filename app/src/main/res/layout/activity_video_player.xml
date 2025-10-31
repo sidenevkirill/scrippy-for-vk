@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:fitsSystemWindows="true">
+
+
+
+    <FrameLayout
+        android:id="@+id/playerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- ExoPlayer View -->
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/playerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"
+            app:resize_mode="fit"
+            app:show_buffering="when_playing"
+            app:use_controller="true"
+            app:auto_show="true" />
+
+        <!-- WebView Fallback -->
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <!-- Добавьте кнопку переключения на WebView -->
+    <Button
+        android:id="@+id/useWebViewButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="120dp"
+        android:text="Use WebView Player"
+        android:visibility="gone" />
+
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/top_gradient"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/arrow_left_black"
+            app:title="Video" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Video Info Panel -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/infoScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_anchor="@+id/appBarLayout"
+        app:layout_anchorGravity="bottom"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Video Title"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLines="3"
+                android:ellipsize="end" />
+
+            <!-- Stats Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <!-- Views -->
+                <TextView
+                    android:id="@+id/viewsTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1.5K views"
+                    android:textColor="#CCCCCC"
+                    android:textSize="14sp"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/sort_variant" />
+
+                <!-- Duration -->
+                <TextView
+                    android:id="@+id/durationTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="5:30"
+                    android:textColor="#CCCCCC"
+                    android:textSize="14sp"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/clock_fast" />
+
+                <!-- Date -->
+                <TextView
+                    android:id="@+id/dateTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="01.01.2024"
+                    android:textColor="#CCCCCC"
+                    android:textSize="14sp"
+                    android:drawablePadding="4dp"
+                    android:drawableStart="@drawable/ic_qr_code"
+                    android:gravity="end" />
+
+            </LinearLayout>
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Video description will appear here. This is a sample description for the video content."
+                android:textColor="#CCCCCC"
+                android:textSize="14sp"
+                android:lineSpacingExtra="4dp"
+                android:maxLines="5"
+                android:ellipsize="end" />
+
+            <!-- Expand/Collapse Description -->
+            <TextView
+                android:id="@+id/expandDescriptionTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Show more"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <!-- Like Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/likeButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Like"
+                    android:textColor="@android:color/white"
+                    app:icon="@drawable/heart_outline"
+                    app:iconTint="@android:color/white" />
+
+                <!-- Share Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/shareButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Share"
+                    android:textColor="@android:color/white"
+                    app:icon="@drawable/shuffle"
+                    app:iconTint="@android:color/white" />
+
+                <!-- Download Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/downloadButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Download"
+                    android:textColor="@android:color/white"
+                    app:icon="@drawable/save_black"
+                    app:iconTint="@android:color/white" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Loading Progress -->
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <!-- Error Message -->
+    <TextView
+        android:id="@+id/errorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="16dp"
+        android:text="Error loading video"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <!-- Retry Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/retryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:text="Retry"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/color_primary"
+        android:visibility="gone" />
+
+    <!-- Fullscreen Button -->
+    <ImageButton
+        android:id="@+id/fullscreenButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:background="@drawable/rounded_background"
+        android:src="@drawable/share_black"
+        android:contentDescription="Fullscreen"
+        android:visibility="gone" />
+
+    <!-- Buffering Indicator -->
+    <ProgressBar
+        android:id="@+id/bufferingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <!-- Back Button Overlay -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|start"
+        android:layout_margin="16dp"
+        android:background="@drawable/rounded_background"
+        android:src="@drawable/arrow_left_black"
+        android:contentDescription="Back"
+        android:visibility="gone" />
+
+    <!-- Settings Menu Button -->
+    <ImageButton
+        android:id="@+id/settingsButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:background="@drawable/rounded_background"
+        android:src="@drawable/dots_vertical"
+        android:contentDescription="Settings"
+        android:visibility="gone" />
+
+    <!-- Play/Pause Overlay Button -->
+    <ImageButton
+        android:id="@+id/playPauseOverlayButton"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_background"
+        android:src="@drawable/play_black"
+        android:contentDescription="Play/Pause"
+        android:visibility="gone" />
+
+    <!-- Volume Control -->
+    <SeekBar
+        android:id="@+id/volumeSeekBar"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_margin="16dp"
+        android:max="100"
+        android:progress="100"
+        android:visibility="gone" />
+
+    <!-- Brightness Control -->
+    <SeekBar
+        android:id="@+id/brightnessSeekBar"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:layout_margin="16dp"
+        android:max="100"
+        android:progress="50"
+        android:visibility="gone" />
+
+    <!-- Playback Speed Indicator -->
+    <TextView
+        android:id="@+id/playbackSpeedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/rounded_background"
+        android:padding="8dp"
+        android:text="1.0x"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <!-- Time Indicator for Seek -->
+    <TextView
+        android:id="@+id/seekTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_background"
+        android:padding="8dp"
+        android:text="+00:00"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <!-- Network Quality Indicator -->
+    <TextView
+        android:id="@+id/networkQualityTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_background"
+        android:padding="4dp"
+        android:text="HD"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

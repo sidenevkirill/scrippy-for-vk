@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_primary"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Введите PIN-код"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp" />
+
+    <TextView
+        android:id="@+id/attempts_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Введите PIN-код"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:layout_marginBottom="30dp"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="40dp">
+
+        <EditText
+            android:id="@+id/pin_field_1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:maxLength="1"
+            android:inputType="number"
+            android:cursorVisible="false"
+            android:layout_margin="8dp" />
+
+        <EditText
+            android:id="@+id/pin_field_2"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:maxLength="1"
+            android:inputType="number"
+            android:cursorVisible="false"
+            android:layout_margin="8dp" />
+
+        <EditText
+            android:id="@+id/pin_field_3"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:maxLength="1"
+            android:inputType="number"
+            android:cursorVisible="false"
+            android:layout_margin="8dp" />
+
+        <EditText
+            android:id="@+id/pin_field_4"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/pin_field_background"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:maxLength="1"
+            android:inputType="number"
+            android:cursorVisible="false"
+            android:layout_margin="8dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/confirm_button"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="Подтвердить"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="20dp"
+        android:enabled="false" />
+
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="Выйти"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="20dp" />
+
+</LinearLayout>

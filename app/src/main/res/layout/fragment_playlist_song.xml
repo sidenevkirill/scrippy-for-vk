@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Content -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        app:layout_constraintBottom_toTopOf="@id/player"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/coordinatorLayout"
+        android:layout_height="0dp"
+        android:layout_width="0dp">
+        <!-- Header -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/appBarLayout"
+            android:elevation="0dp"
+            app:elevation="0dp">
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                app:expandedTitleGravity="top|start"
+                app:expandedTitleTextColor="@android:color/transparent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                app:statusBarScrim="@android:color/transparent"
+                app:contentScrim="?attr/colorPrimary"
+                app:scrimAnimationDuration="600"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:id="@+id/collapsingToolbar"
+                android:elevation="0dp"
+                app:elevation="0dp">
+                <!-- Content -->
+                <androidx.cardview.widget.CardView
+                    app:cardBackgroundColor="@android:color/transparent"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="5dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    android:id="@+id/header">
+                    <!-- Background -->
+                    <ImageView
+                        android:id="@+id/generatedColorView"
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        android:background="#ffffff" />
+
+                    <!-- Background scrim -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent">
+                        <!-- Top -->
+                        <androidx.appcompat.widget.AppCompatImageView
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintDimensionRatio="W,1:2"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0"
+                            android:layout_height="0dp"
+                            android:layout_width="0dp" />
+
+                        <!-- Bottom -->
+                        <androidx.appcompat.widget.AppCompatImageView
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintDimensionRatio="W,1:2"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintVertical_bias="1"
+                            android:layout_height="0dp"
+                            android:layout_width="0dp" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent">
+
+                        <androidx.cardview.widget.CardView
+                            app:layout_constraintBottom_toTopOf="@id/title"
+                            android:layout_width="210dp"
+                            android:layout_height="210dp"
+                            app:cardCornerRadius="12dp"
+                            android:layout_gravity="end"
+                            android:layout_marginBottom="20dp"
+                            android:layout_marginTop="80dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintDimensionRatio="W,1:1"
+                            android:layout_marginHorizontal="80dp"
+                            android:id="@+id/cover"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/image"
+                                android:layout_width="210dp"
+                                android:layout_height="210dp"
+                                android:gravity="center"
+                                android:clipToOutline="true"
+                                android:scaleType="centerCrop"
+                                android:background="@drawable/circle_audio"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+                        </androidx.cardview.widget.CardView>
+
+
+                        <!-- Label -->
+                        <androidx.appcompat.widget.AppCompatTextView
+                            app:layout_constraintTop_toBottomOf="@id/cover"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginHorizontal="25dp"
+                            android:textColor="@color/black"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:layout_marginTop="20dp"
+                            android:text="title"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:ellipsize="end"
+                            android:textSize="16sp"
+                            android:id="@+id/title"
+                            android:maxLines="1" />
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            tools:ignore="UseCompoundDrawables"
+                            app:layout_constraintTop_toBottomOf="@id/title"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginHorizontal="25dp"
+                            android:id="@+id/players_artist"
+                            android:gravity="center"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent">
+
+                            <TextView
+                                android:id="@+id/artist"
+                                android:alpha="0.7"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginLeft="2dp"
+                                android:text="updated_at"
+                                android:visibility="gone"
+                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textColor="@color/black" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            tools:ignore="UseCompoundDrawables"
+                            app:layout_constraintTop_toBottomOf="@id/title"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginHorizontal="25dp"
+                            android:id="@+id/players_title"
+                            android:layout_marginTop="25dp"
+                            android:gravity="center"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent">
+
+                            <TextView
+                                android:id="@+id/players"
+                                android:alpha="0.7"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginLeft="2dp"
+                                android:visibility="gone"
+                                android:text="10000"
+                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textColor="@color/black" />
+
+                        </LinearLayout>
+
+
+                        <!-- Button group -->
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            app:layout_constraintTop_toBottomOf="@id/players_artist"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_height="0dp"
+                            android:layout_width="match_parent">
+                            <Button
+                                android:layout_height="wrap_content"
+                                android:layout_width="match_parent"
+                                android:layout_marginRight="4dp"
+                                android:layout_marginLeft="4dp"
+                                android:drawableLeft="@drawable/play"
+                                android:text="Слушать"
+                                android:textColor="@color/black"
+                                android:backgroundTint="?android:textColorHighlight"
+                                android:id="@+id/play"
+                                android:layout_weight="1" />
+                            <Button
+                                android:id="@+id/shuffle"
+                                android:layout_height="wrap_content"
+                                android:layout_width="75dp"
+                                android:layout_marginRight="4dp"
+                                android:layout_marginLeft="4dp"
+                                android:drawableEnd="@drawable/shuffle"
+                                android:textColor="@color/black"
+                                android:backgroundTint="?android:textColorHighlight" />
+                            <Button
+                                android:layout_height="wrap_content"
+                                android:layout_width="75dp"
+                                android:id="@+id/add"
+                                android:layout_marginRight="4dp"
+                                android:layout_marginLeft="4dp"
+                                android:drawableEnd="@drawable/plus"
+                                android:visibility="gone"
+                                android:textColor="@color/black"
+                                android:backgroundTint="?android:textColorHighlight" />
+                            <Button
+                                android:layout_height="wrap_content"
+                                android:layout_width="75dp"
+                                android:id="@+id/del"
+                                android:layout_marginRight="4dp"
+                                android:layout_marginLeft="4dp"
+                                android:visibility="gone"
+                                android:drawableEnd="@drawable/menu_drawer"
+                                android:textColor="@color/black"
+                                android:backgroundTint="?android:textColorHighlight" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Toolbar -->
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_width="match_parent"
+                    app:layout_collapseMode="pin"
+                    app:navigationIcon="@drawable/arrow_left_black"
+                    app:title="Артист"
+                    android:id="@+id/toolbar"/>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:layout_marginTop="12dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:listitem="@layout/item_audio" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- Bottom player -->
+    <LinearLayout
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="match_parent"
+        android:id="@+id/player" android:layout_height="wrap_content"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:visibility="gone"
+        tools:text="Нет доступных треков"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

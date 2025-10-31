@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:icon="@drawable/ic_vector_outline_settings"
+        android:id="@+id/action_show_settings"
+        android:title="Группы"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:icon="@drawable/save"
+        android:id="@+id/action_show_save"
+        android:title="Загрузки"
+        app:showAsAction="always" />
+
+    <item
+        android:icon="@drawable/playlist_music_outline"
+        android:id="@+id/action_show_friends"
+        android:visible="true"
+        android:title="Группы"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_show_seacrch"
+        android:icon="@drawable/searc"
+        android:title="Поиск"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView"/>
+
+</menu>

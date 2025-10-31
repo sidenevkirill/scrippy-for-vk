@@ -1,0 +1,32 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Небо -->
+    <path
+        android:fillColor="#87CEEB"
+        android:pathData="M0,0 L200,0 L200,200 L0,200 Z" />
+
+    <!-- Солнце -->
+    <circle
+        android:fillColor="#FFD700" />
+
+    <!-- Горы -->
+    <path
+        android:fillColor="#8B4513"
+        android:pathData="M0,120 L50,80 L100,100 L150,60 L200,90 L200,200 L0,200 Z" />
+
+    <!-- Трава -->
+    <path
+        android:fillColor="#228B22"
+        android:pathData="M0,120 L200,120 L200,200 L0,200 Z" />
+
+    <!-- Деревья -->
+    <path android:fillColor="#8B4513" android:pathData="M30,120 L35,120 L35,100 L30,100 Z"/>
+    <path android:fillColor="#228B22" android:pathData="M25,100 L40,100 L32.5,80 Z"/>
+
+    <path android:fillColor="#8B4513" android:pathData="M80,120 L85,120 L85,90 L80,90 Z"/>
+    <path android:fillColor="#228B22" android:pathData="M75,90 L90,90 L82.5,70 Z"/>
+</vector>

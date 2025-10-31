@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item_friends"
+        android:icon="@drawable/chat_outline_selector"
+        android:visible="true"
+        android:title="Чаты" />
+
+    <item
+        android:id="@+id/item_groups"
+        android:icon="@drawable/searc"
+        android:title="Поиск" />
+
+    <item
+        android:id="@+id/item_search"
+        android:icon="@drawable/item_group_selector"
+        android:title="Друзья" />
+
+    <item
+        android:id="@+id/item_account"
+        android:icon="@drawable/item_my_selector"
+        android:visible="false"
+        android:title="Треки" />
+</menu>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/repost_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/repost_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="@color/black"
+        android:lineSpacingMultiplier="1.2" />
+
+    <TextView
+        android:id="@+id/repost_read_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Читать далее"
+        android:textColor="@color/black"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginTop="2dp"/>
+
+    <LinearLayout
+        android:id="@+id/repost_attachments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

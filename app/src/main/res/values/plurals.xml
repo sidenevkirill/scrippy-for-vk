@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="groups_count">
+        <item quantity="one">%d группа</item>
+        <item quantity="few">%d группы</item>
+        <item quantity="many">%d групп</item>
+        <item quantity="other">%d групп</item>
+    </plurals>
+</resources>

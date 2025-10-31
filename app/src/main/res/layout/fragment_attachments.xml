@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/color_primary">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_primary">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:titleTextColor="@color/color_tabs">
+
+                <ImageButton
+                    android:id="@+id/btnBack"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="Аватар профиля"
+                    android:background="@drawable/arrow_left_black"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    app:shapeAppearanceOverlay="@style/CustomShapeImageAvatarMenu"
+                    android:padding="2dp"/>
+
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="40dp"
+                    android:text="Вложения"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/color_tabs"
+                    android:textSize="22sp" />
+
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="6dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/menu"
+                app:tint="@android:color/black" />
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+        <View
+            android:id="@+id/rv7"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#27000000" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Прогресс бар -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
+
+    <!-- Сообщение о пустом списке -->
+    <TextView
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="В этом диалоге нет вложений"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <!-- Список вложений -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewAttachments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible" />
+
+</LinearLayout>

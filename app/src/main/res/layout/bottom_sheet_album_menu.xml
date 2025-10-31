@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_top"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/copy_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Копировать ссылку"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/content_copy"
+        android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/add_to_my_albums"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Добавить к себе"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/plus"
+        android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/edit_playlists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Изменить"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/edit_24px"
+        android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/share_playlists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Поделиться"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/share_black"
+        android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
+    <TextView
+        android:id="@+id/down_playlists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Скачать"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:drawableStart="@drawable/save_black"
+        android:drawablePadding="8dp"/>
+
+</LinearLayout>

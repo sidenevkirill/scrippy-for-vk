@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Поиск -->
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="Поиск"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <!-- Фильтр -->
+    <item
+        android:id="@+id/action_filter"
+        android:title="Фильтр"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <!-- Создать папку -->
+    <item
+        android:id="@+id/action_create_folder"
+        android:title="Создать папку" />
+
+    <!-- Загрузить файл -->
+    <item
+        android:id="@+id/action_upload"
+        android:title="Загрузить файл" />
+
+    <!-- Выбрать все -->
+    <item
+        android:id="@+id/action_select_all"
+        android:title="Выбрать все" />
+
+    <!-- Сортировка -->
+    <item
+        android:id="@+id/action_sort"
+        android:title="Сортировка">
+        <menu>
+            <!-- По имени -->
+            <item
+                android:id="@+id/action_sort_name"
+                android:title="По имени" />
+
+            <!-- По дате -->
+            <item
+                android:id="@+id/action_sort_date"
+                android:title="По дате" />
+
+            <!-- По размеру -->
+            <item
+                android:id="@+id/action_sort_size"
+                android:title="По размеру" />
+
+            <!-- По типу -->
+            <item
+                android:id="@+id/action_sort_type"
+                android:title="По типу" />
+        </menu>
+    </item>
+
+    <!-- Вид отображения -->
+    <item
+        android:id="@+id/action_view"
+        android:title="Вид">
+        <menu>
+            <!-- Список -->
+            <item
+                android:id="@+id/action_view_list"
+                android:title="Список" />
+
+            <!-- Сетка -->
+            <item
+                android:id="@+id/action_view_grid"
+                android:title="Сетка" />
+        </menu>
+    </item>
+
+    <!-- Настройки -->
+    <item
+        android:id="@+id/action_settings"
+        android:title="Настройки" />
+
+    <!-- Обновить -->
+    <item
+        android:id="@+id/action_refresh"
+        android:title="Обновить"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <!-- Информация -->
+    <item
+        android:id="@+id/action_info"
+        android:icon="@drawable/ic_info"
+        android:title="Информация" />
+
+</menu>

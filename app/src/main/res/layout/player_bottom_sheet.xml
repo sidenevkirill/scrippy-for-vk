@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_top"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="18sp"
+        android:background="@drawable/minus"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp"/>
+
+    <!-- Обложка трека -->
+    <ImageView
+        android:id="@+id/coverImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/circle_audio" />
+
+    <!-- Информация о плейлисте -->
+    <TextView
+        android:id="@+id/playlistInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"/>
+
+    <!-- Название трека -->
+    <TextView
+        android:id="@+id/trackTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <!-- Исполнитель -->
+    <TextView
+        android:id="@+id/artistName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="16sp" />
+
+    <!-- Прогресс воспроизведения -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/currentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0:00"
+            android:textColor="?attr/colorOnSurface" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/totalTime"
+            android:layout_toRightOf="@+id/currentTime"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/totalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="0:00"
+            android:textColor="?attr/colorOnSurface" />
+    </RelativeLayout>
+
+    <!-- Управление воспроизведением -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/shuffleButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="24dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:visibility="visible"
+            android:src="@drawable/shuffle" />
+
+        <ImageButton
+            android:id="@+id/equalizerButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="24dp"
+            android:visibility="gone"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_equalizer" />
+
+
+        <ImageButton
+            android:id="@+id/prevButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="24dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_vector_round_skip_previous" />
+
+        <ImageButton
+            android:id="@+id/playPauseButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/pause" />
+
+        <ImageButton
+            android:id="@+id/nextButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_vector_baseline_skip_next" />
+
+        <ImageButton
+            android:id="@+id/repeatButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/refresh" />
+    </LinearLayout>
+</LinearLayout>

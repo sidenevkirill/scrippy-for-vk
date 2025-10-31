@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_primary"
+        app:elevation="1dp">
+
+        <LinearLayout
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:foreground="?android:selectableItemBackground"
+            android:background="@color/color_primary"
+            android:gravity="center_vertical"
+            android:minHeight="72dp"
+            app:layout_scrollFlags="enterAlways|scroll|snap"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/back_button"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/arrow_left_black"
+                        android:layout_marginTop="5dp"
+                        android:contentDescription="Назад"
+                        app:tint="@color/black" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:layout_marginLeft="16dp"
+                        android:textSize="23sp"
+                        android:textColor="@color/black"
+                        android:text="Автоответы" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/resetButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:clickable="false"
+                android:onClick="joinMusic"
+                android:layout_marginRight="16dp"
+                android:focusable="false"
+                android:src="@drawable/delete"
+                android:background="?android:attr/selectableItemBackgroundBorderless" />
+
+            <ImageView
+                android:id="@+id/updateButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:clickable="false"
+                android:onClick="joinMusic"
+                android:layout_marginRight="10dp"
+                android:focusable="false"
+                android:src="@drawable/refresh"
+                android:background="?android:attr/selectableItemBackgroundBorderless" />
+
+            <ImageView
+                android:id="@+id/settingsButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:clickable="false"
+                android:onClick="searchMusic"
+                android:layout_marginLeft="10dp"
+                android:focusable="false"
+                android:src="@drawable/ic_vector_outline_settings"
+                android:background="?android:attr/selectableItemBackgroundBorderless" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/rv7"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_height="0.5dp"
+            android:background="#269A9A9A" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_below="@id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingTop="@dimen/content_padding_half"
+        android:paddingRight="10dp"
+        android:paddingBottom="@dimen/content_padding_half">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Категория:"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginEnd="8dp" />
+
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/spinner_background"
+            android:padding="12dp" />
+
+    </LinearLayout>
+
+
+    <!-- Empty State -->
+    <TextView
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Нет добавленных автоответов\n\nНажмите + чтобы добавить первый"
+        android:textSize="16sp"
+        android:textColor="@color/gray"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:padding="32dp"
+        android:visibility="gone" />
+
+    <!-- Responses List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewResponses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/appBarLayout"
+        android:layout_marginTop="62dp"
+        android:padding="8dp"
+        android:clipToPadding="false" />
+
+    <!-- Add Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/plus"
+        app:tint="@color/black"
+        app:backgroundTint="@color/white" />
+
+</RelativeLayout>

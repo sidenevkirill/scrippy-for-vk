@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- Заголовок набора стикеров (опционально) -->
+    <TextView
+        android:id="@+id/packTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@color/light_gray"
+        android:textColor="@color/black" />
+
+    <!-- Сетка стикеров -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/stickersRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never" />
+
+    <!-- Сообщение о пустом наборе -->
+    <LinearLayout
+        android:id="@+id/emptyState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="32dp">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_sticker_placeholder"
+            android:tint="@color/gray"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Стикеры не найдены"
+            android:textSize="16sp"
+            android:textColor="@color/gray"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Здесь появятся стикеры из этого набора"
+            android:textSize="14sp"
+            android:textColor="@color/light_gray"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
