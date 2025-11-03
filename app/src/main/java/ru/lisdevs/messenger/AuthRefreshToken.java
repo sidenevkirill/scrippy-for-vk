@@ -1,6 +1,8 @@
 package ru.lisdevs.messenger;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,13 +43,9 @@ public class AuthRefreshToken extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vk_auth_without_webview);
 
-        // Инициализация TokenManager
         tokenManager = TokenManager.getInstance(this);
 
-        // Инициализация UI элементов
         initViews();
-
-        // Проверка существующего токена
         checkExistingToken();
     }
 
@@ -147,6 +145,29 @@ public class AuthRefreshToken extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private String getUserAgent() {
+        if (isAuthViaAuthActivity()) {
+            return "VKAndroidApp/1.0";
+        } else {
+            try {
+                return Authorizer.getKateUserAgent();
+            } catch (Exception e) {
+                return "VKAndroidApp/1.0";
+            }
+        }
+    }
+
+    private boolean isAuthViaAuthActivity() {
+        SharedPreferences prefs = new AuthRefreshToken().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE);
+        String authType = prefs.getString("auth_type", null);
+
+        if (authType != null) {
+            return "AuthActivity".equals(authType);
+        }
+
+        return true;
     }
 
     private void navigateToMainActivity() {

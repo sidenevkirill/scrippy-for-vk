@@ -69,7 +69,6 @@
         <activity android:name=".VKAuthMaruActivity"/>
         <activity android:name=".auth.KateAuthActivity"/>
         <activity android:name=".VKAuthActivity"/>
-        <activity android:name=".local.LocalActivity"/>
         <activity android:name=".BaseActivity"/>
         <activity android:name=".LoginActivity"/>
         <activity android:name=".RegistarationActivity"

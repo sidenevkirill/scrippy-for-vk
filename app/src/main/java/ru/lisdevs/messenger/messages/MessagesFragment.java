@@ -45,6 +45,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
@@ -2008,6 +2009,7 @@ public class MessagesFragment extends Fragment {
         TextView groupsFragment = bottomSheetView.findViewById(R.id.groups);
         TextView albumFragment = bottomSheetView.findViewById(R.id.albums);
         TextView docFragment = bottomSheetView.findViewById(R.id.doc);
+        TextView exitButton = bottomSheetView.findViewById(R.id.exit);
 
         // СКРЫВАЕМ ПУНКТ "СТИКЕРПАКИ" ДЛЯ ТЕСТОВОГО АККАУНТА
         if (isTestMode) {
@@ -2092,7 +2094,38 @@ public class MessagesFragment extends Fragment {
             bottomSheetDialog.dismiss();
         });
 
+        exitButton.setOnClickListener(v -> {
+            showExitConfirmationDialog();
+            bottomSheetDialog.dismiss();
+        });
+
         bottomSheetDialog.show();
+    }
+
+    private void showExitConfirmationDialog() {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Выход из приложения")
+                .setMessage("Вы действительно хотите выйти из приложения?")
+                .setPositiveButton("Выйти", (dialog, which) -> {
+                    exitApp();
+                })
+                .setNegativeButton("Отмена", null)
+                .setCancelable(true)
+                .show();
+    }
+
+    // Метод для выхода из приложения
+    private void exitApp() {
+        // Вариант 1: Завершение всех активностей
+        if (getActivity() != null) {
+            getActivity().finishAffinity();
+        }
+
+        // Вариант 2: Завершение процесса (более жесткий способ)
+        // android.os.Process.killProcess(android.os.Process.myPid());
+
+        // Вариант 3: Системный выход
+        // System.exit(0);
     }
 
     private void openAutoResponses() {

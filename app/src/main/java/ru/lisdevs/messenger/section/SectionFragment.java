@@ -22,7 +22,6 @@ import ru.lisdevs.messenger.music.MyMusicFragment;
 import ru.lisdevs.messenger.music.RecommendationFragment;
 import ru.lisdevs.messenger.playlists.VkPlaylistsFragment;
 import ru.lisdevs.messenger.search.MusicSearchFragment;
-import ru.lisdevs.messenger.subscription.SubscriptionFragment;
 
 public class SectionFragment extends Fragment {
 
@@ -48,10 +47,6 @@ public class SectionFragment extends Fragment {
         //toolbar.inflateMenu(R.menu.menu_home);
 
         toolbar.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_show_unlock) {
-                navigateToFragment(new SubscriptionFragment());
-                return true;
-            }
             if (item.getItemId() == R.id.action_show_save) {
                 navigateToFragment(new VkPlaylistsFragment());
                 return true;
