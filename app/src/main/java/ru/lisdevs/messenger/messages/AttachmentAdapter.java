@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int TYPE_AUDIO = 2;
     private static final int TYPE_AUDIO_MESSAGE = 3;
     private static final int TYPE_STICKER = 4;
+    private static final int TYPE_GRAFFITI = 5; // Добавлен тип для граффити
 
     private List<Attachment> attachments = new ArrayList<>();
     private OnPhotoClickListener onPhotoClickListener;
@@ -45,7 +47,19 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemViewType(int position) {
         Attachment attachment = attachments.get(position);
-        switch (attachment.getType()) {
+        String type = attachment.getType();
+
+        // Проверяем, является ли документ граффити
+        if ("doc".equals(type) && attachment.getDoc() != null && "graffiti".equals(attachment.getDoc().getType())) {
+            return TYPE_GRAFFITI;
+        }
+
+        // Проверяем, является ли вложение граффити
+        if ("graffiti".equals(type)) {
+            return TYPE_GRAFFITI;
+        }
+
+        switch (type) {
             case "photo":
                 return TYPE_PHOTO;
             case "doc":
@@ -82,6 +96,9 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             case TYPE_STICKER:
                 View stickerView = inflater.inflate(R.layout.item_attachment_sticker, parent, false);
                 return new StickerViewHolder(stickerView);
+            case TYPE_GRAFFITI:
+                View graffitiView = inflater.inflate(R.layout.item_attachment_graffiti, parent, false);
+                return new GraffitiViewHolder(graffitiView);
             default:
                 View defaultView = inflater.inflate(R.layout.item_attachment_document, parent, false);
                 return new DocumentViewHolder(defaultView);
@@ -107,6 +124,9 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
             case TYPE_STICKER:
                 ((StickerViewHolder) holder).bind(attachment.getPhoto());
+                break;
+            case TYPE_GRAFFITI:
+                ((GraffitiViewHolder) holder).bind(attachment);
                 break;
         }
     }
@@ -163,6 +183,97 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    // ViewHolder для граффити
+    class GraffitiViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
+        TextView graffitiLabel;
+        ProgressBar progressBar;
+
+        public GraffitiViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.graffitiImage);
+            graffitiLabel = itemView.findViewById(R.id.graffitiLabel);
+            progressBar = itemView.findViewById(R.id.progressBar);
+
+            imageView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    Attachment attachment = attachments.get(position);
+                    if (onPhotoClickListener != null) {
+                        // Для граффити используем фото из вложения
+                        if (attachment.getPhoto() != null) {
+                            onPhotoClickListener.onPhotoClick(attachment.getPhoto(), position);
+                        }
+                    }
+                }
+            });
+        }
+
+        void bind(Attachment attachment) {
+            // Показываем прогресс-бар при загрузке
+            if (progressBar != null) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            // Показываем лейбл граффити
+            if (graffitiLabel != null) {
+                graffitiLabel.setVisibility(View.GONE);
+                graffitiLabel.setText("😊 Стикер");
+            }
+
+            String imageUrl = null;
+
+            // Пытаемся получить изображение граффити
+            if (attachment.getPhoto() != null) {
+                imageUrl = attachment.getPhoto().getBestQualityUrl();
+            }
+
+            // Если нет изображения в photo, но есть документ с граффити
+            if ((imageUrl == null || imageUrl.isEmpty()) && attachment.getDoc() != null) {
+                imageUrl = attachment.getDoc().getUrl();
+            }
+
+            // Устанавливаем размеры для граффити
+            ViewGroup.LayoutParams params = imageView.getLayoutParams();
+            int targetSize = (int) (200 * itemView.getContext().getResources().getDisplayMetrics().density);
+            params.width = targetSize;
+            params.height = targetSize;
+            imageView.setLayoutParams(params);
+
+            // Загружаем изображение граффити
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                Picasso.get()
+                        .load(imageUrl)
+                        .resize(targetSize, targetSize)
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_sticker_placeholder)
+                        .error(R.drawable.ic_sticker_placeholder)
+                        .into(imageView, new com.squareup.picasso.Callback() {
+                            @Override
+                            public void onSuccess() {
+                                if (progressBar != null) {
+                                    progressBar.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                if (progressBar != null) {
+                                    progressBar.setVisibility(View.GONE);
+                                }
+                                imageView.setImageResource(R.drawable.ic_sticker_placeholder);
+                            }
+                        });
+            } else {
+                // Если URL нет, показываем placeholder
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.GONE);
+                }
+                imageView.setImageResource(R.drawable.ic_sticker_placeholder);
+            }
+        }
+    }
+
     // ViewHolder для документов
     static class DocumentViewHolder extends RecyclerView.ViewHolder {
         ImageView iconView;
@@ -180,6 +291,14 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         void bind(Attachment.Document doc) {
             if (doc != null) {
+                // Пропускаем отображение документов-граффити (они обрабатываются в GraffitiViewHolder)
+                if ("graffiti".equals(doc.getType())) {
+                    itemView.setVisibility(View.GONE);
+                    return;
+                }
+
+                itemView.setVisibility(View.VISIBLE);
+
                 // Устанавливаем иконку в зависимости от типа документа
                 int iconRes = getDocumentIcon(doc.getExt(), doc.getType());
                 iconView.setImageResource(iconRes);

@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
@@ -158,6 +160,12 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
     private BroadcastReceiver stickerUpdateReceiver;
     private BroadcastReceiver settingsChangeReceiver;
 
+    private LinearLayout stickerManagementPanel;
+    private boolean isStickerManagementPanelVisible = true;
+
+    private TextWatcher textWatcher;
+    private boolean hasText = false;
+
     // Для отправки треков
     private Audio currentAudioToShare;
     private ImageButton btnAttachAudio;
@@ -210,6 +218,8 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         initStickersViews();
         loadStickers();
         initInsets();
+        setupStickersClickListeners();
+        setupTextWatcher();
 
         checkTestMode();
 
@@ -623,6 +633,7 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
 
         // Настройка ViewPager2 с табами
         setupStickersViewPager();
+        setupStickersViewPagerScrollListener();
 
         // Настройка RecyclerView для стикеров (резервный вариант)
         GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
@@ -676,6 +687,81 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
                 }).attach();
     }
 
+    private void setupStickersViewPagerScrollListener() {
+        if (stickersViewPager != null) {
+            stickersViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                    // Можно добавить анимацию скрытия/показа при прокрутке
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    super.onPageSelected(position);
+                    // При смене страницы скрываем панель управления
+                    hideStickerManagementPanel();
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                    super.onPageScrollStateChanged(state);
+                    if (state == ViewPager2.SCROLL_STATE_DRAGGING) {
+                        // Начали прокрутку - скрываем панель
+                        hideStickerManagementPanel();
+                    }
+                }
+            });
+        }
+
+        // Также настраиваем для RecyclerView (фолбэк вариант)
+        RecyclerView stickersRecyclerView = findViewById(R.id.stickersRecyclerView);
+        if (stickersRecyclerView != null) {
+            stickersRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (Math.abs(dy) > 2) { // Если прокрутка достаточно значительная
+                        hideStickerManagementPanel();
+                    }
+                }
+
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        hideStickerManagementPanel();
+                    }
+                }
+            });
+        }
+    }
+
+    // Методы для управления видимостью панели управления
+    private void hideStickerManagementPanel() {
+        if (stickerManagementPanel != null && isStickerManagementPanelVisible) {
+            stickerManagementPanel.animate()
+                    .translationY(stickerManagementPanel.getHeight())
+                    .setDuration(200)
+                    .withEndAction(() -> {
+                        stickerManagementPanel.setVisibility(View.GONE);
+                        isStickerManagementPanelVisible = false;
+                    })
+                    .start();
+        }
+    }
+
+    private void showStickerManagementPanel() {
+        if (stickerManagementPanel != null && !isStickerManagementPanelVisible) {
+            stickerManagementPanel.setVisibility(View.VISIBLE);
+            stickerManagementPanel.animate()
+                    .translationY(0)
+                    .setDuration(200)
+                    .withEndAction(() -> isStickerManagementPanelVisible = true)
+                    .start();
+        }
+    }
+
     private void toggleStickersPanel() {
         if (isStickersPanelVisible) {
             hideStickersPanel();
@@ -688,6 +774,9 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         stickersPanel.setVisibility(View.VISIBLE);
         isStickersPanelVisible = true;
 
+        // Показываем панель управления при открытии панели стикеров
+        showStickerManagementPanel();
+
         // Скрываем клавиатуру
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && editTextMessage != null) {
@@ -698,6 +787,31 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
     private void hideStickersPanel() {
         stickersPanel.setVisibility(View.GONE);
         isStickersPanelVisible = false;
+
+        // Показываем панель управления при закрытии всей панели стикеров
+        showStickerManagementPanel();
+    }
+
+    private void setupStickersClickListeners() {
+        // При клике на область стикеров показываем панель управления
+        View stickersContent = findViewById(R.id.stickersViewPager);
+        if (stickersContent != null) {
+            stickersContent.setOnClickListener(v -> {
+                if (!isStickerManagementPanelVisible) {
+                    showStickerManagementPanel();
+                }
+            });
+        }
+
+        // То же для RecyclerView
+        RecyclerView stickersRecyclerView = findViewById(R.id.stickersRecyclerView);
+        if (stickersRecyclerView != null) {
+            stickersRecyclerView.setOnClickListener(v -> {
+                if (!isStickerManagementPanelVisible) {
+                    showStickerManagementPanel();
+                }
+            });
+        }
     }
 
     private void loadStickers() {
@@ -759,8 +873,385 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
             if (SettingsFragment.isSendStickersAsStickersEnabled(this)) {
                 sendStickerAsSticker(sticker);
             } else {
-                sendStickerAsImage(sticker);
+                sendStickerAsGraffiti(sticker); // Изменено: отправляем как граффити вместо изображения
             }
+        }
+    }
+
+    // Метод для отправки стикера как граффити
+    private void sendStickerAsGraffiti(Sticker sticker) {
+        if (isTestMode) {
+            // В тестовом режиме показываем сообщение о демо
+            Toast.makeText(this, "Демо-режим: стикер отправлен как граффити", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (sticker == null || sticker.getImageUrl() == null) {
+            Toast.makeText(this, "Ошибка: неверный стикер", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String accessToken = TokenManager.getInstance(this).getToken();
+        if (accessToken != null && peerId != null) {
+            // Создаем временное сообщение со стикером как граффити
+            Message stickerMessage = new Message(userId, userName, "", System.currentTimeMillis(), null);
+            stickerMessage.setOutgoing(true);
+            stickerMessage.setReadStatus(Message.READ_STATUS_SENT);
+            stickerMessage.setPeerId(peerId);
+            stickerMessage.setPreviewText("🎨 Граффити");
+
+            // Добавляем в список для мгновенного отображения
+            adapter.addMessage(stickerMessage);
+            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+
+            // Загружаем изображение стикера и отправляем как граффити
+            loadAndSendStickerAsGraffiti(sticker, stickerMessage);
+        } else {
+            Toast.makeText(this, "Не удалось отправить стикер", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadAndSendStickerAsGraffiti(Sticker sticker, Message tempMessage) {
+        if (sticker == null) {
+            runOnUiThread(() -> {
+                Toast.makeText(DialogActivity.this, "Ошибка: неверный стикер", Toast.LENGTH_SHORT).show();
+                messageList.remove(tempMessage);
+                adapter.notifyDataSetChanged();
+            });
+            return;
+        }
+
+        // Проверяем валидность URL
+        String imageUrl = sticker.getImageUrl();
+        if (!isValidUrl(imageUrl)) {
+            Log.e(TAG, "Invalid sticker URL: " + imageUrl);
+            runOnUiThread(() -> {
+                Toast.makeText(DialogActivity.this, "Ошибка: неверный URL стикера", Toast.LENGTH_SHORT).show();
+                messageList.remove(tempMessage);
+                adapter.notifyDataSetChanged();
+            });
+            return;
+        }
+
+        // Исправление: добавляем схему к URL если её нет
+        if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+            imageUrl = "https://" + imageUrl;
+            Log.d(TAG, "Fixed URL scheme: " + imageUrl);
+        }
+
+        // Загружаем изображение стикера
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(imageUrl)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "Failed to load sticker image", e);
+                runOnUiThread(() -> {
+                    Toast.makeText(DialogActivity.this, "Ошибка загрузки стикера", Toast.LENGTH_SHORT).show();
+                    messageList.remove(tempMessage);
+                    adapter.notifyDataSetChanged();
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    // Получаем байты изображения
+                    byte[] imageBytes = response.body().bytes();
+
+                    // Отправляем как граффити через VK API
+                    uploadStickerAsGraffiti(imageBytes, tempMessage, sticker);
+                } else {
+                    runOnUiThread(() -> {
+                        Toast.makeText(DialogActivity.this, "Ошибка загрузки изображения: " + response.code(), Toast.LENGTH_SHORT).show();
+                        messageList.remove(tempMessage);
+                        adapter.notifyDataSetChanged();
+                    });
+                }
+            }
+        });
+    }
+
+    private void uploadStickerAsGraffiti(byte[] imageBytes, Message tempMessage, Sticker originalSticker) {
+        String accessToken = TokenManager.getInstance(this).getToken();
+
+        // Получаем URL для загрузки граффити
+        String getUploadUrl = "https://api.vk.com/method/docs.getMessagesUploadServer" +
+                "?access_token=" + accessToken +
+                "&type=graffiti" +
+                "&peer_id=" + peerId +
+                "&v=5.131";
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(getUploadUrl)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "Failed to get graffiti upload server", e);
+                runOnUiThread(() -> {
+                    Toast.makeText(DialogActivity.this, "Ошибка получения сервера загрузки граффити", Toast.LENGTH_SHORT).show();
+                    messageList.remove(tempMessage);
+                    adapter.notifyDataSetChanged();
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBody = response.body().string();
+                        JSONObject json = new JSONObject(responseBody);
+
+                        if (json.has("response")) {
+                            JSONObject uploadServer = json.getJSONObject("response");
+                            String uploadUrl = uploadServer.getString("upload_url");
+
+                            // Загружаем изображение на сервер как граффити
+                            uploadGraffitiToServer(imageBytes, uploadUrl, tempMessage, originalSticker);
+                        } else {
+                            handleGraffitiUploadError(json, tempMessage);
+                        }
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing graffiti upload server response", e);
+                        runOnUiThread(() -> {
+                            Toast.makeText(DialogActivity.this, "Ошибка обработки ответа сервера", Toast.LENGTH_SHORT).show();
+                            messageList.remove(tempMessage);
+                            adapter.notifyDataSetChanged();
+                        });
+                    }
+                } else {
+                    runOnUiThread(() -> {
+                        Toast.makeText(DialogActivity.this, "Ошибка получения сервера загрузки: " + response.code(), Toast.LENGTH_SHORT).show();
+                        messageList.remove(tempMessage);
+                        adapter.notifyDataSetChanged();
+                    });
+                }
+            }
+        });
+    }
+
+    private void uploadGraffitiToServer(byte[] imageBytes, String uploadUrl, Message tempMessage, Sticker originalSticker) {
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", "graffiti.png",
+                        RequestBody.create(imageBytes, MediaType.parse("image/png")))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(uploadUrl)
+                .post(requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "Failed to upload graffiti", e);
+                runOnUiThread(() -> {
+                    Toast.makeText(DialogActivity.this, "Ошибка загрузки граффити", Toast.LENGTH_SHORT).show();
+                    messageList.remove(tempMessage);
+                    adapter.notifyDataSetChanged();
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBody = response.body().string();
+                        // Сохраняем граффити в VK
+                        saveGraffiti(responseBody, tempMessage, originalSticker);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error processing graffiti upload response", e);
+                        runOnUiThread(() -> {
+                            messageList.remove(tempMessage);
+                            adapter.notifyDataSetChanged();
+                        });
+                    }
+                } else {
+                    runOnUiThread(() -> {
+                        Toast.makeText(DialogActivity.this, "Ошибка загрузки граффити: " + response.code(), Toast.LENGTH_SHORT).show();
+                        messageList.remove(tempMessage);
+                        adapter.notifyDataSetChanged();
+                    });
+                }
+            }
+        });
+    }
+
+    private void saveGraffiti(String uploadResponse, Message tempMessage, Sticker originalSticker) {
+        String accessToken = TokenManager.getInstance(this).getToken();
+
+        try {
+            JSONObject uploadJson = new JSONObject(uploadResponse);
+            String file = uploadJson.getString("file");
+
+            String saveUrl = "https://api.vk.com/method/docs.save" +
+                    "?access_token=" + accessToken +
+                    "&v=5.131" +
+                    "&file=" + URLEncoder.encode(file, "UTF-8");
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(saveUrl)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.e(TAG, "Failed to save graffiti", e);
+                    runOnUiThread(() -> {
+                        Toast.makeText(DialogActivity.this, "Ошибка сохранения граффити", Toast.LENGTH_SHORT).show();
+                        messageList.remove(tempMessage);
+                        adapter.notifyDataSetChanged();
+                    });
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        try {
+                            String responseBody = response.body().string();
+                            JSONObject json = new JSONObject(responseBody);
+
+                            if (json.has("response")) {
+                                JSONObject graffiti = json.getJSONObject("response");
+
+                                // Получаем данные граффити
+                                JSONObject doc = graffiti.getJSONObject("graffiti");
+                                int ownerId = doc.getInt("owner_id");
+                                int docId = doc.getInt("id");
+
+                                // Отправляем сообщение с граффити
+                                sendGraffitiMessage(ownerId, docId, tempMessage, originalSticker);
+                            } else {
+                                handleGraffitiSaveError(json, tempMessage);
+                            }
+                        } catch (JSONException e) {
+                            Log.e(TAG, "Error parsing save graffiti response", e);
+                            runOnUiThread(() -> {
+                                messageList.remove(tempMessage);
+                                adapter.notifyDataSetChanged();
+                            });
+                        }
+                    } else {
+                        runOnUiThread(() -> {
+                            Toast.makeText(DialogActivity.this, "Ошибка сохранения граффити: " + response.code(), Toast.LENGTH_SHORT).show();
+                            messageList.remove(tempMessage);
+                            adapter.notifyDataSetChanged();
+                        });
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Error in saveGraffiti", e);
+            runOnUiThread(() -> {
+                messageList.remove(tempMessage);
+                adapter.notifyDataSetChanged();
+            });
+        }
+    }
+
+    private void sendGraffitiMessage(int ownerId, int docId, Message tempMessage, Sticker originalSticker) {
+        String accessToken = TokenManager.getInstance(this).getToken();
+
+        try {
+            // Формируем attachment для граффити в формате doc{owner_id}_{doc_id}
+            String attachment = "doc" + ownerId + "_" + docId;
+
+            String url = "https://api.vk.com/method/messages.send" +
+                    "?access_token=" + accessToken +
+                    "&v=5.131" +
+                    "&peer_id=" + peerId +
+                    "&attachment=" + URLEncoder.encode(attachment, "UTF-8") +
+                    "&random_id=" + System.currentTimeMillis();
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.e(TAG, "Failed to send graffiti message", e);
+                    runOnUiThread(() -> {
+                        Toast.makeText(DialogActivity.this, "Ошибка отправки граффити", Toast.LENGTH_SHORT).show();
+                        messageList.remove(tempMessage);
+                        adapter.notifyDataSetChanged();
+                    });
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    runOnUiThread(() -> {
+                        if (response.isSuccessful()) {
+                            // ВАЖНОЕ ИСПРАВЛЕНИЕ: Полностью перезагружаем историю для получения правильных данных
+                            loadDialogHistory(0, true);
+
+                            Toast.makeText(DialogActivity.this, "Граффити отправлено", Toast.LENGTH_SHORT).show();
+                            hideStickersPanel();
+                        } else {
+                            messageList.remove(tempMessage);
+                            adapter.notifyDataSetChanged();
+                            Toast.makeText(DialogActivity.this, "Ошибка отправки: " + response.code(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Error sending graffiti message", e);
+            runOnUiThread(() -> {
+                messageList.remove(tempMessage);
+                adapter.notifyDataSetChanged();
+            });
+        }
+    }
+
+    private void handleGraffitiUploadError(JSONObject json, Message tempMessage) {
+        try {
+            if (json.has("error")) {
+                JSONObject error = json.getJSONObject("error");
+                String errorMsg = error.optString("error_msg", "Неизвестная ошибка");
+                runOnUiThread(() -> {
+                    Toast.makeText(DialogActivity.this,
+                            "Ошибка загрузки граффити: " + errorMsg, Toast.LENGTH_LONG).show();
+                    messageList.remove(tempMessage);
+                    adapter.notifyDataSetChanged();
+                });
+            }
+        } catch (JSONException e) {
+            runOnUiThread(() -> {
+                Toast.makeText(DialogActivity.this, "Ошибка загрузки граффити", Toast.LENGTH_SHORT).show();
+                messageList.remove(tempMessage);
+                adapter.notifyDataSetChanged();
+            });
+        }
+    }
+
+    private void handleGraffitiSaveError(JSONObject json, Message tempMessage) {
+        try {
+            if (json.has("error")) {
+                JSONObject error = json.getJSONObject("error");
+                String errorMsg = error.optString("error_msg", "Неизвестная ошибка");
+                runOnUiThread(() -> {
+                    Toast.makeText(DialogActivity.this,
+                            "Ошибка сохранения граффити: " + errorMsg, Toast.LENGTH_LONG).show();
+                    messageList.remove(tempMessage);
+                    adapter.notifyDataSetChanged();
+                });
+            }
+        } catch (JSONException e) {
+            runOnUiThread(() -> {
+                Toast.makeText(DialogActivity.this, "Ошибка сохранения граффити", Toast.LENGTH_SHORT).show();
+                messageList.remove(tempMessage);
+                adapter.notifyDataSetChanged();
+            });
         }
     }
 
@@ -1836,6 +2327,17 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
                 case "doc":
                     Attachment.Document doc = parseDocument(attachmentData);
                     attachment.setDoc(doc);
+
+                    // ВАЖНОЕ ИСПРАВЛЕНИЕ: Правильно определяем граффити
+                    if ("graffiti".equals(doc.getType())) {
+                        attachment.setType("graffiti"); // Устанавливаем правильный тип
+
+                        // Создаем фото для отображения граффити из превью документа
+                        Attachment.Photo graffitiPhoto = createGraffitiPhotoFromDocument(doc, attachmentData);
+                        if (graffitiPhoto != null) {
+                            attachment.setPhoto(graffitiPhoto);
+                        }
+                    }
                     break;
 
                 case "audio":
@@ -1844,20 +2346,17 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
                     break;
 
                 case "audio_message":
-                    // Обработка голосовых сообщений
                     Attachment.Document audioMessage = parseAudioMessage(attachmentData);
                     attachment.setDoc(audioMessage);
                     attachment.setType("audio_message");
                     break;
 
                 case "sticker":
-                    // Обработка стикеров
                     Attachment.Photo sticker = parseSticker(attachmentData);
                     attachment.setPhoto(sticker);
                     break;
 
                 default:
-                    // Обработка других типов вложений
                     Attachment.Document otherDoc = parseOtherAttachment(attachmentData, type);
                     attachment.setDoc(otherDoc);
                     break;
@@ -1867,6 +2366,110 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         }
 
         return attachments;
+    }
+
+    private Attachment.Photo createGraffitiPhotoFromDocument(Attachment.Document graffitiDoc, JSONObject attachmentData) {
+        if (graffitiDoc == null) return null;
+
+        Attachment.Photo photo = new Attachment.Photo();
+        List<Attachment.Size> sizes = new ArrayList<>();
+
+        try {
+            // Пытаемся получить превью граффити из документа
+            if (attachmentData.has("preview")) {
+                JSONObject preview = attachmentData.getJSONObject("preview");
+                if (preview.has("photo")) {
+                    JSONObject photoPreview = preview.getJSONObject("photo");
+                    JSONArray sizesArray = photoPreview.getJSONArray("sizes");
+
+                    for (int i = 0; i < sizesArray.length(); i++) {
+                        JSONObject sizeObj = sizesArray.getJSONObject(i);
+                        Attachment.Size size = new Attachment.Size();
+                        size.setUrl(sizeObj.getString("src"));
+                        size.setWidth(sizeObj.getInt("width"));
+                        size.setHeight(sizeObj.getInt("height"));
+                        size.setType(getSizeType(sizeObj.getInt("width")));
+                        sizes.add(size);
+                    }
+                }
+            }
+
+            // Если превью не найдено, но есть URL документа, используем его
+            if (sizes.isEmpty() && graffitiDoc.getUrl() != null && !graffitiDoc.getUrl().isEmpty()) {
+                Attachment.Size size = new Attachment.Size();
+                size.setUrl(graffitiDoc.getUrl());
+                size.setWidth(256); // стандартный размер для граффити
+                size.setHeight(256);
+                size.setType("x");
+                sizes.add(size);
+            }
+
+            // Если все еще нет URL, создаем placeholder
+            if (sizes.isEmpty()) {
+                Attachment.Size size = new Attachment.Size();
+                size.setUrl(""); // пустой URL для placeholder
+                size.setWidth(256);
+                size.setHeight(256);
+                size.setType("x");
+                sizes.add(size);
+            }
+
+            photo.setSizes(sizes);
+            return photo;
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Error creating graffiti photo from document", e);
+
+            // Fallback: создаем базовое фото для граффити
+            Attachment.Size size = new Attachment.Size();
+            size.setUrl(graffitiDoc != null ? graffitiDoc.getUrl() : "");
+            size.setWidth(256);
+            size.setHeight(256);
+            size.setType("x");
+            sizes.add(size);
+            photo.setSizes(sizes);
+            return photo;
+        }
+    }
+
+    // Вспомогательный метод для определения типа размера
+    private String getSizeType(int width) {
+        if (width >= 1280) return "w";
+        if (width >= 807) return "z";
+        if (width >= 604) return "y";
+        if (width >= 510) return "x";
+        if (width >= 320) return "m";
+        if (width >= 160) return "s";
+        return "o";
+    }
+
+    private Attachment.Photo createGraffitiPreview(Attachment.Document graffitiDoc) {
+        if (graffitiDoc == null) {
+            return null;
+        }
+
+        Attachment.Photo photo = new Attachment.Photo();
+        List<Attachment.Size> sizes = new ArrayList<>();
+        Attachment.Size size = new Attachment.Size();
+
+        // Для граффити используем превью из документа
+        // VK API обычно предоставляет превью для граффити в поле "preview"
+        try {
+            // Пытаемся получить URL превью граффити
+            // В реальном API граффити может иметь превью в разных размерах
+            size.setUrl(graffitiDoc.getUrl()); // Используем основной URL документа как fallback
+            size.setWidth(200); // Стандартная ширина для граффити
+            size.setHeight(200); // Стандартная высота для граффити
+            size.setType("x");
+
+            sizes.add(size);
+            photo.setSizes(sizes);
+
+            return photo;
+        } catch (Exception e) {
+            Log.e(TAG, "Error creating graffiti preview", e);
+            return null;
+        }
     }
 
     private Attachment.Photo parsePhoto(JSONObject photoObj) throws JSONException {
@@ -1893,11 +2496,23 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
     private Attachment.Document parseDocument(JSONObject docObj) throws JSONException {
         Attachment.Document doc = new Attachment.Document();
         doc.setId(String.valueOf(docObj.getInt("id")));
+        doc.setOwnerId(String.valueOf(docObj.getInt("owner_id")));
         doc.setTitle(docObj.getString("title"));
         doc.setExt(docObj.getString("ext"));
         doc.setUrl(docObj.getString("url"));
         doc.setSize(docObj.getInt("size"));
         doc.setType(docObj.optString("type", "document"));
+
+        // Сохраняем превью для граффити
+        if ("graffiti".equals(doc.getType()) && docObj.has("preview")) {
+            try {
+                JSONObject preview = docObj.getJSONObject("preview");
+                // Информация о превью будет использована в createGraffitiPhotoFromDocument
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing graffiti preview", e);
+            }
+        }
+
         return doc;
     }
 
@@ -1969,6 +2584,12 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         Map<String, Integer> typeCounts = new HashMap<>();
         for (Attachment attachment : attachments) {
             String type = attachment.getType();
+
+            // Учитываем граффити как отдельный тип
+            if ("doc".equals(type) && attachment.getDoc() != null && "graffiti".equals(attachment.getDoc().getType())) {
+                type = "graffiti";
+            }
+
             Integer count = typeCounts.get(type);
             if (count == null) {
                 typeCounts.put(type, 1);
@@ -1979,13 +2600,19 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
 
         List<String> parts = new ArrayList<>();
 
-        // Фото
+        // Граффити (добавляем в начало)
+        Integer graffitiCount = typeCounts.get("graffiti");
+        if (graffitiCount != null && graffitiCount > 0) {
+            parts.add("🎨 Граффити");
+        }
+
+        // Фото (исключаем граффити)
         Integer photoCount = typeCounts.get("photo");
         if (photoCount != null && photoCount > 0) {
             parts.add("📷 " + photoCount);
         }
 
-        // Документы
+        // Документы (исключаем граффити)
         Integer docCount = typeCounts.get("doc");
         if (docCount != null && docCount > 0) {
             parts.add("📎 " + docCount);
@@ -2014,7 +2641,7 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         for (Map.Entry<String, Integer> entry : typeCounts.entrySet()) {
             String type = entry.getKey();
             if (!type.equals("photo") && !type.equals("doc") && !type.equals("audio") &&
-                    !type.equals("audio_message") && !type.equals("sticker")) {
+                    !type.equals("audio_message") && !type.equals("sticker") && !type.equals("graffiti")) {
                 otherCount += entry.getValue();
             }
         }
@@ -2301,7 +2928,7 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         }
 
         // ИСПРАВЛЕНИЕ: Правильная регистрация BroadcastReceiver для Android 13+
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(stickerUpdateReceiver, stickerFilter, RECEIVER_NOT_EXPORTED);
             registerReceiver(settingsChangeReceiver, settingsFilter, RECEIVER_NOT_EXPORTED);
         } else {
@@ -2312,7 +2939,7 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         // Регистрируем receiver для изменения фона
         IntentFilter backgroundFilter = new IntentFilter("CHAT_BACKGROUND_CHANGED");
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(backgroundChangeReceiver, backgroundFilter, RECEIVER_NOT_EXPORTED);
         } else {
             registerReceiver(backgroundChangeReceiver, backgroundFilter);
@@ -2862,14 +3489,77 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         }
     }
 
+    private void setupTextWatcher() {
+        textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                boolean newHasText = s.toString().trim().length() > 0;
+                if (newHasText != hasText) {
+                    hasText = newHasText;
+                    updateSendButtonIcon();
+                }
+            }
+        };
+
+        editTextMessage.addTextChangedListener(textWatcher);
+
+        // Инициализируем иконку при старте
+        updateSendButtonIcon();
+    }
+
+    // Метод для обновления иконки кнопки отправки
+    private void updateSendButtonIcon() {
+        if (buttonSend == null) return;
+
+        if (hasText) {
+            // Если есть текст - показываем иконку отправки сообщения
+            buttonSend.setImageResource(R.drawable.ic_send_tap);
+        } else {
+            // Если текста нет - показываем иконку записи голосового сообщения
+            buttonSend.setImageResource(R.drawable.ic_send);
+        }
+
+        // Добавляем анимацию при смене иконки
+        buttonSend.animate()
+                .scaleX(0.8f)
+                .scaleY(0.8f)
+                .setDuration(100)
+                .withEndAction(() -> buttonSend.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(100)
+                        .start())
+                .start();
+    }
+
     private void setupClickListeners() {
         if (buttonSend != null) {
             buttonSend.setOnClickListener(v -> {
-                String messageText = editTextMessage.getText().toString().trim();
-                if (!messageText.isEmpty()) {
-                    sendMessage(messageText);
-                    editTextMessage.setText("");
+                if (hasText) {
+                    // Если есть текст - отправляем сообщение
+                    String messageText = editTextMessage.getText().toString().trim();
+                    if (!messageText.isEmpty()) {
+                        sendMessage(messageText);
+                        editTextMessage.setText("");
+                    }
+                } else {
+                    // Если текста нет - запускаем запись голосового сообщения
+                    startVoiceRecording();
                 }
+            });
+        }
+
+        // Длинное нажатие на кнопку отправки (даже когда есть текст) для записи голосового
+        if (buttonSend != null) {
+            buttonSend.setOnLongClickListener(v -> {
+                startVoiceRecording();
+                return true;
             });
         }
 
@@ -2921,6 +3611,43 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
             });
         }
     }
+
+    private void startVoiceRecording() {
+        if (isTestMode) {
+            Toast.makeText(this, "Демо-режим: запись голосового сообщения", Toast.LENGTH_SHORT).show();
+
+            // Создаем тестовое голосовое сообщение
+            Message voiceMessage = new Message(
+                    "current_user",
+                    "Вы",
+                    "",
+                    System.currentTimeMillis(),
+                    null
+            );
+            voiceMessage.setOutgoing(true);
+            voiceMessage.setReadStatus(Message.READ_STATUS_SENT);
+            voiceMessage.setPreviewText("🎤 Голосовое сообщение");
+
+            adapter.addMessage(voiceMessage);
+            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        } else {
+            // TODO: Реализовать запись голосового сообщения
+            //Toast.makeText(this, "Запись голосового сообщения...", Toast.LENGTH_SHORT).show();
+
+            // Временная заглушка - можно интегрировать с AudioRecord или MediaRecorder
+            showVoiceRecordingDialog();
+        }
+    }
+
+    // Диалог записи голосового сообщения (временная реализация)
+    private void showVoiceRecordingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Упс, ошибка")
+                .setMessage("Сначала введите текст")
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
 
     // МЕТОД: Показать диалог выбора фото
     private void showPhotoSelectionDialog() {

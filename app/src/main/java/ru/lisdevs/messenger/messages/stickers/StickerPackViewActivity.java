@@ -163,12 +163,317 @@ public class StickerPackViewActivity extends AppCompatActivity implements Sticke
 
         // Показываем прогресс
         ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Отправка стикера...");
+        progressDialog.setMessage("Отправка стикера как граффити...");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        // Загружаем изображение стикера и отправляем как фото
-        loadAndSendStickerAsImage(sticker, dialog, progressDialog);
+        // Загружаем изображение стикера и отправляем как граффити
+        loadAndSendStickerAsGraffiti(sticker, dialog, progressDialog);
+    }
+
+    private void loadAndSendStickerAsGraffiti(Sticker sticker, Message dialog, ProgressDialog progressDialog) {
+        if (sticker == null || sticker.getImageUrl() == null) {
+            progressDialog.dismiss();
+            Toast.makeText(this, "Ошибка: неверный стикер", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String imageUrl = sticker.getImageUrl();
+
+        // Исправляем URL если нужно
+        if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+            imageUrl = "https://" + imageUrl;
+        }
+
+        // Загружаем изображение стикера
+        Request request = new Request.Builder()
+                .url(imageUrl)
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(StickerPackViewActivity.this, "Ошибка загрузки стикера", Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    // Получаем байты изображения
+                    byte[] imageBytes = response.body().bytes();
+
+                    // Отправляем как граффити через VK API
+                    uploadStickerAsGraffiti(imageBytes, dialog, sticker, progressDialog);
+                } else {
+                    runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(StickerPackViewActivity.this,
+                                "Ошибка загрузки изображения: " + response.code(), Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
+    }
+
+    private void uploadStickerAsGraffiti(byte[] imageBytes, Message dialog, Sticker sticker, ProgressDialog progressDialog) {
+        String accessToken = TokenManager.getInstance(this).getToken();
+
+        // Получаем URL для загрузки граффити
+        String getUploadUrl = "https://api.vk.com/method/docs.getMessagesUploadServer" +
+                "?access_token=" + accessToken +
+                "&type=graffiti" +
+                "&peer_id=" + dialog.getPeerId() +
+                "&v=5.131";
+
+        Request request = new Request.Builder()
+                .url(getUploadUrl)
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(StickerPackViewActivity.this, "Ошибка получения сервера загрузки граффити", Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBody = response.body().string();
+                        JSONObject json = new JSONObject(responseBody);
+
+                        if (json.has("response")) {
+                            JSONObject uploadServer = json.getJSONObject("response");
+                            String uploadUrl = uploadServer.getString("upload_url");
+
+                            // Загружаем изображение на сервер как граффити
+                            uploadGraffitiToServer(imageBytes, uploadUrl, dialog, sticker, progressDialog);
+                        } else {
+                            handleGraffitiUploadError(json, progressDialog);
+                        }
+                    } catch (JSONException e) {
+                        runOnUiThread(() -> {
+                            progressDialog.dismiss();
+                            Toast.makeText(StickerPackViewActivity.this, "Ошибка обработки ответа сервера", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                } else {
+                    runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(StickerPackViewActivity.this,
+                                "Ошибка получения сервера загрузки: " + response.code(), Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
+    }
+
+    private void uploadGraffitiToServer(byte[] imageBytes, String uploadUrl, Message dialog, Sticker sticker, ProgressDialog progressDialog) {
+        // Конвертируем изображение в подходящий формат для граффити (PNG)
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", "graffiti.png",
+                        RequestBody.create(imageBytes, MediaType.parse("image/png")))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(uploadUrl)
+                .post(requestBody)
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(StickerPackViewActivity.this, "Ошибка загрузки граффити", Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBody = response.body().string();
+                        // Сохраняем граффити в VK
+                        saveGraffiti(responseBody, dialog, sticker, progressDialog);
+                    } catch (Exception e) {
+                        runOnUiThread(() -> {
+                            progressDialog.dismiss();
+                            Toast.makeText(StickerPackViewActivity.this, "Ошибка обработки ответа", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                } else {
+                    runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(StickerPackViewActivity.this,
+                                "Ошибка загрузки граффити: " + response.code(), Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
+    }
+
+    private void saveGraffiti(String uploadResponse, Message dialog, Sticker sticker, ProgressDialog progressDialog) {
+        String accessToken = TokenManager.getInstance(this).getToken();
+
+        try {
+            JSONObject uploadJson = new JSONObject(uploadResponse);
+            String file = uploadJson.getString("file");
+
+            String saveUrl = "https://api.vk.com/method/docs.save" +
+                    "?access_token=" + accessToken +
+                    "&v=5.131" +
+                    "&file=" + URLEncoder.encode(file, "UTF-8");
+
+            Request request = new Request.Builder()
+                    .url(saveUrl)
+                    .build();
+
+            httpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(StickerPackViewActivity.this, "Ошибка сохранения граффити", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        try {
+                            String responseBody = response.body().string();
+                            JSONObject json = new JSONObject(responseBody);
+
+                            if (json.has("response")) {
+                                JSONObject graffiti = json.getJSONObject("response");
+
+                                // Получаем данные граффити
+                                JSONObject doc = graffiti.getJSONObject("graffiti");
+                                int ownerId = doc.getInt("owner_id");
+                                int docId = doc.getInt("id");
+
+                                // Отправляем сообщение с граффити
+                                sendGraffitiMessage(ownerId, docId, dialog, sticker, progressDialog);
+                            } else {
+                                handleGraffitiSaveError(json, progressDialog);
+                            }
+                        } catch (JSONException e) {
+                            runOnUiThread(() -> {
+                                progressDialog.dismiss();
+                                Toast.makeText(StickerPackViewActivity.this, "Ошибка сохранения граффити", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    } else {
+                        runOnUiThread(() -> {
+                            progressDialog.dismiss();
+                            Toast.makeText(StickerPackViewActivity.this,
+                                    "Ошибка сохранения граффити: " + response.code(), Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                }
+            });
+        } catch (Exception e) {
+            runOnUiThread(() -> {
+                progressDialog.dismiss();
+                Toast.makeText(StickerPackViewActivity.this, "Ошибка обработки граффити", Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
+    private void sendGraffitiMessage(int ownerId, int docId, Message dialog, Sticker sticker, ProgressDialog progressDialog) {
+        String accessToken = TokenManager.getInstance(this).getToken();
+
+        try {
+            // Формируем attachment для граффити в формате doc{owner_id}_{doc_id}
+            String attachment = "doc" + ownerId + "_" + docId;
+
+            String url = "https://api.vk.com/method/messages.send" +
+                    "?access_token=" + accessToken +
+                    "&v=5.131" +
+                    "&peer_id=" + dialog.getPeerId() +
+                    "&attachment=" + URLEncoder.encode(attachment, "UTF-8") +
+                    "&random_id=" + System.currentTimeMillis();
+
+            Request request = new Request.Builder().url(url).build();
+
+            httpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    runOnUiThread(() -> {
+                        progressDialog.dismiss();
+                        Toast.makeText(StickerPackViewActivity.this, "Ошибка отправки граффити", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    runOnUiThread(() -> {
+                        progressDialog.dismiss();
+
+                        if (response.isSuccessful()) {
+                            Toast.makeText(StickerPackViewActivity.this,
+                                    "Граффити отправлено в диалог с " + dialog.getSenderName(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(StickerPackViewActivity.this,
+                                    "Ошибка отправки граффити: " + response.code(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+            runOnUiThread(() -> {
+                progressDialog.dismiss();
+                Toast.makeText(StickerPackViewActivity.this, "Ошибка отправки граффити", Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
+    private void handleGraffitiUploadError(JSONObject json, ProgressDialog progressDialog) {
+        try {
+            if (json.has("error")) {
+                JSONObject error = json.getJSONObject("error");
+                String errorMsg = error.optString("error_msg", "Неизвестная ошибка");
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(StickerPackViewActivity.this,
+                            "Ошибка загрузки граффити: " + errorMsg, Toast.LENGTH_LONG).show();
+                });
+            }
+        } catch (JSONException e) {
+            runOnUiThread(() -> {
+                progressDialog.dismiss();
+                Toast.makeText(StickerPackViewActivity.this, "Ошибка загрузки граффити", Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
+    private void handleGraffitiSaveError(JSONObject json, ProgressDialog progressDialog) {
+        try {
+            if (json.has("error")) {
+                JSONObject error = json.getJSONObject("error");
+                String errorMsg = error.optString("error_msg", "Неизвестная ошибка");
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(StickerPackViewActivity.this,
+                            "Ошибка сохранения граффити: " + errorMsg, Toast.LENGTH_LONG).show();
+                });
+            }
+        } catch (JSONException e) {
+            runOnUiThread(() -> {
+                progressDialog.dismiss();
+                Toast.makeText(StickerPackViewActivity.this, "Ошибка сохранения граффити", Toast.LENGTH_SHORT).show();
+            });
+        }
     }
 
     private void loadAndSendStickerAsImage(Sticker sticker, Message dialog, ProgressDialog progressDialog) {

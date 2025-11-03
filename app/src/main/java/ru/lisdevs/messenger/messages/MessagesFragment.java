@@ -135,7 +135,7 @@ public class MessagesFragment extends Fragment {
     private List<Friend> friendList = new ArrayList<>();
 
     // ID закрепленных чатов (Поддержка и Авто-бот)
-    private Set<String> pinnedChatIds = new HashSet<>(Arrays.asList("-71746274", "-999999999"));
+    private Set<String> pinnedChatIds = new HashSet<>(Arrays.asList("-71746274"));
 
     // Для SwipeRefresh и прогресса
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -2805,25 +2805,6 @@ public class MessagesFragment extends Fragment {
                                             dialog.setUnreadCount(conversation.optInt("unread_count"));
                                         }
                                         pinnedDialogs.add(dialog);
-                                    } else if ("-999999999".equals(dialogInfo.userId)) {
-                                        hasAutoBot = true;
-                                        // Для авто-бота меняем имя на "Авто-бот"
-                                        dialog = new Dialog(
-                                                dialogInfo.userId,
-                                                "Авто-бот",
-                                                "Привет! Я бот с готовыми ответами.",
-                                                date,
-                                                peerId,
-                                                "https://via.placeholder.com/100/4CAF50/FFFFFF?text=AI"
-                                        );
-                                        dialog.setReadStatus(readStatus);
-                                        dialog.setOutgoing(isOut);
-                                        dialog.setGroupChat("chat".equals(peerType));
-                                        dialog.setChatTitle("Авто-бот");
-                                        if (conversation.has("unread_count")) {
-                                            dialog.setUnreadCount(conversation.optInt("unread_count"));
-                                        }
-                                        pinnedDialogs.add(dialog);
                                     }
                                 } else {
                                     // Фильтруем архивные чаты если не показываем их
@@ -2839,12 +2820,6 @@ public class MessagesFragment extends Fragment {
                             if (!hasSupportChat && !showArchivedChats) {
                                 Dialog supportDialog = createSupportDialog();
                                 pinnedDialogs.add(supportDialog);
-                            }
-
-                            // Если авто-бота нет в списке, создаем искусственного (только в обычном режиме)
-                            if (!hasAutoBot && !showArchivedChats) {
-                                Dialog autoBotDialog = createAutoBotDialog();
-                                pinnedDialogs.add(autoBotDialog);
                             }
 
                             // Сохраняем все диалоги для последующей фильтрации
@@ -3556,7 +3531,7 @@ public class MessagesFragment extends Fragment {
                 // Иконка группового чата
                 if (groupChatIcon != null) {
                     if (dialog.isGroupChat()) {
-                        groupChatIcon.setVisibility(View.VISIBLE);
+                        groupChatIcon.setVisibility(View.GONE);
                         groupChatIcon.setImageResource(R.drawable.circle_chat);
                         groupChatIcon.setContentDescription("Групповой чат");
                     } else {
@@ -3579,10 +3554,6 @@ public class MessagesFragment extends Fragment {
                         importantIcon.setVisibility(View.VISIBLE);
                         importantIcon.setImageResource(R.drawable.circle_help);
                         importantIcon.setContentDescription("Поддержка");
-                    } else if (isFavoriteChat) {
-                        importantIcon.setVisibility(View.VISIBLE);
-                        importantIcon.setImageResource(R.drawable.circle_star);
-                        importantIcon.setContentDescription("Избранное");
                     } else if (isAutoBot) {
                         importantIcon.setVisibility(View.VISIBLE);
                         importantIcon.setImageResource(R.drawable.circle_robot); // Добавьте эту иконку в ресурсы

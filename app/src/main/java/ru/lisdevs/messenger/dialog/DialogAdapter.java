@@ -166,12 +166,13 @@ public class DialogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             if (readStatusIcon != null) {
                 switch (message.getReadStatus()) {
                     case Message.READ_STATUS_SENT:
-                        readStatusIcon.setImageResource(R.drawable.ic_check_sent);
+                        readStatusIcon.setImageResource(R.drawable.ic_check_read);
+                        readStatusIcon.setColorFilter(Color.parseColor("#4285FF"));
                         readStatusIcon.setColorFilter(Color.GRAY);
                         readStatusIcon.setVisibility(View.VISIBLE);
                         break;
                     case Message.READ_STATUS_READ:
-                        readStatusIcon.setImageResource(R.drawable.ic_check_double_read);
+                        readStatusIcon.setImageResource(R.drawable.ic_check_sent);
                         readStatusIcon.setColorFilter(Color.parseColor("#4285FF"));
                         readStatusIcon.setVisibility(View.VISIBLE);
                         break;

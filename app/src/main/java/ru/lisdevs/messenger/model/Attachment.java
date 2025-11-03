@@ -3,8 +3,13 @@ package ru.lisdevs.messenger.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+
+import ru.lisdevs.messenger.R;
 
 // Базовый класс для вложений
 public class Attachment implements Parcelable {
@@ -56,6 +61,10 @@ public class Attachment implements Parcelable {
     public void setDoc(Document doc) { this.doc = doc; }
     public Audio getAudio() { return audio; }
     public void setAudio(Audio audio) { this.audio = audio; }
+
+    public boolean isGraffiti() {
+        return "graffiti".equals(type);
+    }
 
     public static class Photo implements Parcelable {
         private List<Size> sizes;
@@ -255,31 +264,40 @@ public class Attachment implements Parcelable {
 
     public static class Document implements Parcelable {
         private String id;
+        private String ownerId; // ДОБАВЛЕНО: owner_id документа
         private String title;
         private String ext;
         private String url;
         private int size;
         private String type;
+        private long date; // ДОБАВЛЕНО: дата создания документа
+        private String accessKey; // ДОБАВЛЕНО: ключ доступа для приватных документов
 
         public Document() {}
 
         protected Document(Parcel in) {
             id = in.readString();
+            ownerId = in.readString(); // ДОБАВЛЕНО
             title = in.readString();
             ext = in.readString();
             url = in.readString();
             size = in.readInt();
             type = in.readString();
+            date = in.readLong(); // ДОБАВЛЕНО
+            accessKey = in.readString(); // ДОБАВЛЕНО
         }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeString(id);
+            dest.writeString(ownerId); // ДОБАВЛЕНО
             dest.writeString(title);
             dest.writeString(ext);
             dest.writeString(url);
             dest.writeInt(size);
             dest.writeString(type);
+            dest.writeLong(date); // ДОБАВЛЕНО
+            dest.writeString(accessKey); // ДОБАВЛЕНО
         }
 
         @Override
@@ -299,18 +317,108 @@ public class Attachment implements Parcelable {
             }
         };
 
+        // Геттеры и сеттеры
         public String getId() { return id; }
         public void setId(String id) { this.id = id; }
+
+        public String getOwnerId() { return ownerId; } // ДОБАВЛЕНО
+        public void setOwnerId(String ownerId) { this.ownerId = ownerId; } // ДОБАВЛЕНО
+
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }
+
         public String getExt() { return ext; }
         public void setExt(String ext) { this.ext = ext; }
+
         public String getUrl() { return url; }
         public void setUrl(String url) { this.url = url; }
+
         public int getSize() { return size; }
         public void setSize(int size) { this.size = size; }
+
         public String getType() { return type; }
         public void setType(String type) { this.type = type; }
+
+        public long getDate() { return date; } // ДОБАВЛЕНО
+        public void setDate(long date) { this.date = date; } // ДОБАВЛЕНО
+
+        public String getAccessKey() { return accessKey; } // ДОБАВЛЕНО
+        public void setAccessKey(String accessKey) { this.accessKey = accessKey; } // ДОБАВЛЕНО
+
+        // ДОБАВЛЕНО: Метод для получения полного идентификатора документа (ownerId_id)
+        public String getFullId() {
+            if (ownerId != null && id != null) {
+                return ownerId + "_" + id;
+            }
+            return id;
+        }
+
+        // ДОБАВЛЕНО: Метод для проверки, является ли документ граффити
+        public boolean isGraffiti() {
+            return "graffiti".equals(type);
+        }
+
+        // ДОБАВЛЕНО: Метод для проверки, является ли документ аудиосообщением
+        public boolean isAudioMessage() {
+            return "audio_message".equals(type);
+        }
+
+        // ДОБАВЛЕНО: Метод для проверки, является ли документ изображением
+        public boolean isImage() {
+            return "image".equals(type) ||
+                    "png".equalsIgnoreCase(ext) ||
+                    "jpg".equalsIgnoreCase(ext) ||
+                    "jpeg".equalsIgnoreCase(ext) ||
+                    "gif".equalsIgnoreCase(ext);
+        }
+
+        // ДОБАВЛЕНО: Метод для получения иконки типа документа
+        public int getIconResource() {
+            if (isGraffiti()) {
+                return R.drawable.ic_sticker_placeholder;
+            } else if (isAudioMessage()) {
+                return R.drawable.ic_audio_message;
+            } else if (isImage()) {
+                return R.drawable.image;
+            } else if ("pdf".equalsIgnoreCase(ext)) {
+                return R.drawable.ic_pdf;
+            } else if ("doc".equalsIgnoreCase(ext) || "docx".equalsIgnoreCase(ext)) {
+                return R.drawable.ic_word;
+            } else if ("xls".equalsIgnoreCase(ext) || "xlsx".equalsIgnoreCase(ext)) {
+                return R.drawable.ic_excel;
+            } else if ("ppt".equalsIgnoreCase(ext) || "pptx".equalsIgnoreCase(ext)) {
+                return R.drawable.ic_powerpoint;
+            } else if ("zip".equalsIgnoreCase(ext) || "rar".equalsIgnoreCase(ext) || "7z".equalsIgnoreCase(ext)) {
+                return R.drawable.ic_archive;
+            } else {
+                return R.drawable.ic_document;
+            }
+        }
+
+        // ДОБАВЛЕНО: Метод для получения читабельного типа документа
+        public String getReadableType() {
+            if (isGraffiti()) {
+                return "Граффити";
+            } else if (isAudioMessage()) {
+                return "Голосовое сообщение";
+            } else if (isImage()) {
+                return "Изображение";
+            } else if ("pdf".equalsIgnoreCase(ext)) {
+                return "PDF документ";
+            } else if ("doc".equalsIgnoreCase(ext) || "docx".equalsIgnoreCase(ext)) {
+                return "Документ Word";
+            } else if ("xls".equalsIgnoreCase(ext) || "xlsx".equalsIgnoreCase(ext)) {
+                return "Таблица Excel";
+            } else if ("ppt".equalsIgnoreCase(ext) || "pptx".equalsIgnoreCase(ext)) {
+                return "Презентация";
+            } else if ("zip".equalsIgnoreCase(ext) || "rar".equalsIgnoreCase(ext) || "7z".equalsIgnoreCase(ext)) {
+                return "Архив";
+            } else if ("txt".equalsIgnoreCase(ext)) {
+                return "Текстовый файл";
+            } else {
+                return "Документ";
+            }
+        }
 
         public String getFormattedSize() {
             if (size < 1024) {
@@ -320,6 +428,53 @@ public class Attachment implements Parcelable {
             } else {
                 return String.format(Locale.getDefault(), "%.1f MB", size / (1024.0 * 1024.0));
             }
+        }
+
+        // ДОБАВЛЕНО: Метод для форматирования даты
+        public String getFormattedDate() {
+            if (date == 0) return "";
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+            return sdf.format(new Date(date * 1000)); // Умножаем на 1000, т.к. VK API возвращает время в секундах
+        }
+
+        // ДОБАВЛЕНО: Метод для проверки, можно ли просмотреть документ
+        public boolean isViewable() {
+            return isImage() || isGraffiti() || "pdf".equalsIgnoreCase(ext) || "txt".equalsIgnoreCase(ext);
+        }
+
+        // ДОБАВЛЕНО: Метод для проверки, можно ли скачать документ
+        public boolean isDownloadable() {
+            return url != null && !url.isEmpty();
+        }
+
+        // ДОБАВЛЕНО: toString для отладки
+        @Override
+        public String toString() {
+            return "Document{" +
+                    "id='" + id + '\'' +
+                    ", ownerId='" + ownerId + '\'' +
+                    ", title='" + title + '\'' +
+                    ", ext='" + ext + '\'' +
+                    ", type='" + type + '\'' +
+                    ", size=" + size +
+                    ", date=" + date +
+                    '}';
+        }
+
+        // ДОБАВЛЕНО: equals и hashCode для корректного сравнения документов
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Document document = (Document) o;
+            return Objects.equals(id, document.id) &&
+                    Objects.equals(ownerId, document.ownerId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, ownerId);
         }
     }
 

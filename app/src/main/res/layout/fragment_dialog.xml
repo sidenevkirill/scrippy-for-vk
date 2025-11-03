@@ -291,8 +291,7 @@
                 android:layout_marginStart="2dp"
                 android:layout_marginEnd="2dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_attach"
-                app:tint="@color/black"/>
+                android:src="@drawable/ic_attach" />
 
             <!-- Контейнер для кнопки смайликов и поля ввода с общим фоном -->
             <LinearLayout
@@ -355,8 +354,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_send"
-                app:tint="@color/black"/>
+                android:src="@drawable/ic_send" />
 
         </LinearLayout>
 

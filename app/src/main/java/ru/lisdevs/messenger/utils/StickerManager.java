@@ -34,7 +34,7 @@ public class StickerManager {
     private List<Sticker> fallbackStickers;
 
     // Общее количество пакетов (300)
-    private static final int TOTAL_PACKS = 100;
+    private static final int TOTAL_PACKS = 300;
 
     public static StickerManager getInstance(Context context) {
         if (instance == null) {

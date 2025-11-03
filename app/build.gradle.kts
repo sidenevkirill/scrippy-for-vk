@@ -10,8 +10,8 @@ android {
         applicationId = "ru.lisdevs.messenger"
         minSdk = 21
         targetSdk = 36
-        versionCode = 38
-        versionName = "0.3.8"
+        versionCode = 39
+        versionName = "0.3.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,7 +44,6 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.swiperefreshlayout)
     implementation(libs.browser)
-    //implementation(libs.work.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
