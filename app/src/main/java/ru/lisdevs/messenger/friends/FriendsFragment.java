@@ -12,8 +12,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +43,7 @@ import okhttp3.ResponseBody;
 import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.groups.GroupsTabFragment;
 import ru.lisdevs.messenger.dialog.DialogActivity;
+import ru.lisdevs.messenger.search.GroupsSearchFragment;
 import ru.lisdevs.messenger.utils.CircleTransform;
 import ru.lisdevs.messenger.utils.TokenManager;
 
@@ -74,6 +79,7 @@ public class FriendsFragment extends Fragment {
     private FriendsPagerAdapter pagerAdapter;
     private OkHttpClient httpClient;
     private String accessToken;
+    private Toolbar toolbar;
 
     private Set<Long> specialUsers = new HashSet<>();
     private boolean isSpecialUsersLoaded = false;
@@ -166,6 +172,7 @@ public class FriendsFragment extends Fragment {
 
         initViews(view);
         setupViewPager();
+        setupToolbar();
 
         return view;
     }
@@ -173,6 +180,7 @@ public class FriendsFragment extends Fragment {
     private void initViews(View view) {
         viewPager = view.findViewById(R.id.viewPager);
         tabLayout = view.findViewById(R.id.tabLayout);
+        toolbar = view.findViewById(R.id.toolbar);
     }
 
     private void setupViewPager() {
@@ -326,6 +334,7 @@ public class FriendsFragment extends Fragment {
             swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
             statusTextView = view.findViewById(R.id.emptyView);
             friendsCountTextView = view.findViewById(R.id.count);
+
 
             swipeRefreshLayout.setOnRefreshListener(this::fetchVKFriends);
         }
@@ -1512,5 +1521,40 @@ public class FriendsFragment extends Fragment {
         public String getPhotoUrl() {
             return photoUrl;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        // Просто не вызываем inflater - меню не будет создано
+        // inflater.inflate(R.menu.menu_friends, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void setupToolbar() {
+        if (toolbar != null && getActivity() instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            activity.setSupportActionBar(toolbar);
+            if (activity.getSupportActionBar() != null) {
+
+            }
+
+        }
+    }
+
+
+
+    private void navigateToGroupsSearchFragment() {
+        GroupsSearchFragment groupsSearchFragment = new GroupsSearchFragment();
+        Bundle args = new Bundle();
+
+        groupsSearchFragment.setArguments(args);
+
+        // Используем getChildFragmentManager() для вложенных фрагментов
+        // или getParentFragmentManager() в зависимости от структуры
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.container, groupsSearchFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

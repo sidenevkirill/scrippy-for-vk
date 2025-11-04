@@ -1,7 +1,5 @@
 package ru.lisdevs.messenger.settings;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -29,7 +27,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,7 +54,6 @@ import okhttp3.Response;
 import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.VKAuthActivity;
 import ru.lisdevs.messenger.service.AlwaysOnlineService;
-import ru.lisdevs.messenger.utils.OnlineWorker;
 import ru.lisdevs.messenger.utils.PinManager;
 import ru.lisdevs.messenger.utils.TokenManager;
 import com.squareup.picasso.Picasso;

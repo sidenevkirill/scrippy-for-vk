@@ -51,9 +51,6 @@ import ru.lisdevs.messenger.auth.PinLoginActivity;
 import ru.lisdevs.messenger.favorites.FavoritesFragment;
 import ru.lisdevs.messenger.friends.FriendsFragment;
 import ru.lisdevs.messenger.friends.FriendsSearchFragment;
-import ru.lisdevs.messenger.gift.GiftsFragment;
-import ru.lisdevs.messenger.gift.VoiceStatsFragment;
-import ru.lisdevs.messenger.menu.MenuFragment;
 import ru.lisdevs.messenger.messages.MessagesFragment;
 import ru.lisdevs.messenger.music.MusicListFragment;
 import ru.lisdevs.messenger.music.MusicTabsFragment;
@@ -65,31 +62,6 @@ import ru.lisdevs.messenger.playlists.VkPlaylistsFragment;
 import ru.lisdevs.messenger.service.MusicPlayerService;
 import ru.lisdevs.messenger.utils.PinManager;
 import ru.lisdevs.messenger.utils.TokenManager;
-
-import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -253,7 +225,6 @@ public class BaseActivity extends AppCompatActivity
     private void setupBottomNavigation() {
         bottomNavigationView = findViewById(R.id.navigation);
         if (bottomNavigationView != null) {
-            // Скрываем пункт "Аккаунт" в тестовом режиме
             if (isTestMode) {
                 hideAccountMenuItem();
             }
@@ -270,7 +241,7 @@ public class BaseActivity extends AppCompatActivity
                         changeFragment(new FriendsFragment());
                         return true;
                     case R.id.item_account:
-                        // В тестовом режиме этот пункт должен быть скрыт, но на всякий случай проверяем
+                        // В тестовом режиме этот пункт должен быть скрыт
                         if (!isTestMode) {
                             changeFragment(new MusicTabsFragment());
                             return true;

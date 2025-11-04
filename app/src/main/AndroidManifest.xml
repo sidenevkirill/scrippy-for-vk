@@ -75,7 +75,6 @@
             android:theme="@style/Wellcome.AppTheme"/>
         <activity android:name=".AuthRefreshToken"
             android:theme="@style/Base.Theme.Scrippy.Login" />
-        <activity android:name=".groups.DetailGroupActivity"/>
         <activity android:name=".messages.stickers.StickerStoreActivity"/>
         <activity android:name=".messages.stickers.StickerPackManagerActivity"/>
         <activity android:name=".messages.stickers.StickerPackViewActivity"/>

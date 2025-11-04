@@ -6,6 +6,7 @@
         android:icon="@drawable/item_group_selector"
         android:id="@+id/action_show_friends"
         android:title="Группы"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item
