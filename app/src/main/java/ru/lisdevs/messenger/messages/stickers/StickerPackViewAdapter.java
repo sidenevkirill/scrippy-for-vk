@@ -132,7 +132,7 @@ public class StickerPackViewAdapter extends RecyclerView.Adapter<StickerPackView
                 }
 
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(R.drawable.ic_sticker_placeholder)
+                        //.placeholder(R.drawable.ic_sticker_placeholder)
                         .error(R.drawable.emoticon_outline)
                         .override(256, 256) // Больший размер для детального просмотра
                         .centerInside();

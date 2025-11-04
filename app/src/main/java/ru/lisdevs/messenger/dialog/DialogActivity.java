@@ -3145,6 +3145,8 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
             getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.color_send));
         }
 
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.color_primary));
+
         // Устанавливаем фиксированный отступ для навигационной панели
         if (navigationSpacer != null) {
             ViewGroup.LayoutParams params = navigationSpacer.getLayoutParams();
@@ -4079,6 +4081,7 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         currentAudioToShare = audio;
         sendAudioMessage(audio);
     }
+
 
     private boolean isStickerPurchased(Sticker sticker) {
         return false;

@@ -86,8 +86,7 @@
 
         <activity
             android:name=".dialog.DialogActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Base.Theme.Scrippy"/>
+            />
 
         <provider
             android:name="androidx.core.content.FileProvider"

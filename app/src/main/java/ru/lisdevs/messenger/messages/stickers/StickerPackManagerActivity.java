@@ -138,7 +138,7 @@ public class StickerPackManagerActivity extends AppCompatActivity {
                 String message = enabled ?
                         "Стикерпак \"" + pack.getTitle() + "\" включен" :
                         "Стикерпак \"" + pack.getTitle() + "\" отключен";
-                Toast.makeText(StickerPackManagerActivity.this, message, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(StickerPackManagerActivity.this, message, Toast.LENGTH_SHORT).show();
 
                 // Обновляем список в диалоге (если он открыт)
                 sendBroadcastToUpdateStickers();
