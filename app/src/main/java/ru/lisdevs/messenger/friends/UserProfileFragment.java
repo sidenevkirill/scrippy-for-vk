@@ -237,8 +237,8 @@ public class UserProfileFragment extends Fragment {
         View bottomSheetView = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_vk_profile, null);
         bottomSheetDialog.setContentView(bottomSheetView);
 
-        Button copyProfileLink = bottomSheetView.findViewById(R.id.copyButton);
-        Button copyUserId = bottomSheetView.findViewById(R.id.copyId);
+        TextView copyProfileLink = bottomSheetView.findViewById(R.id.copyButton);
+        TextView copyUserId = bottomSheetView.findViewById(R.id.copyId);
 
         copyUserId.setOnClickListener(v -> {
             copyToClipboard("ID пользователя", String.valueOf(friendId));

@@ -2813,6 +2813,9 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
             case R.id.menu_info:
                 showDialogInfo();
                 return true;
+            case R.id.menu_attachmennt:
+                showAttachmentsFragment();
+                return true;
             case R.id.menu_manage_stickers:
                 openStickerPackManager();
                 return true;
@@ -3116,7 +3119,7 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
                         recyclerView.getPaddingLeft(),
                         recyclerView.getPaddingTop(),
                         recyclerView.getPaddingRight(),
-                        bottomInset + 16 // Добавляем дополнительный отступ
+                        bottomInset + 16
                 );
             }
 

@@ -38,7 +38,7 @@
     <LinearLayout
         android:id="@+id/mini_player_container"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="46dp"
         android:paddingRight="0dp"
         android:paddingLeft="0dp"
         android:visibility="gone"
@@ -68,7 +68,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="12dp"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="0dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -83,7 +83,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:text="@string/app_name"
+                    android:text="На луне"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:textAlignment="center"
@@ -110,8 +110,8 @@
 
         <ImageButton
             android:id="@+id/miniPlayerNext"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/ic_vector_round_skip_next" />
 

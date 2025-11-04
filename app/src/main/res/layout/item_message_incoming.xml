@@ -32,7 +32,7 @@
                 android:layout_height="12dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:src="@drawable/check_verif"
+                android:src="@drawable/circle_shufle"
                 android:visibility="gone" />
 
         </RelativeLayout>

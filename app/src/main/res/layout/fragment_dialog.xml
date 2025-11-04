@@ -184,9 +184,9 @@
             android:layout_height="48dp"
             android:background="@color/white"
             app:tabBackground="@color/white"
-            app:tabTextColor="@color/black"
-            app:tabSelectedTextColor="@color/gray"
-            app:tabIndicatorColor="@color/black"
+            app:tabTextColor="@color/gray"
+            app:tabSelectedTextColor="@color/black"
+            app:tabIndicatorColor="@color/gray"
             app:tabMode="scrollable"
             app:tabGravity="center" />
 
@@ -251,7 +251,7 @@
                 android:paddingEnd="8dp"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
-                android:text="50 наборов"
+                android:text="300 наборов"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 

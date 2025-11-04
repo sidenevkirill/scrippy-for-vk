@@ -13,10 +13,17 @@
         android:icon="@drawable/close"
         android:title="Очистить историю"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_attachmennt"
+        android:icon="@drawable/information_outline"
+        android:title="Вложения"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/menu_info"
         android:icon="@drawable/information_outline"
-        android:title="Информация о диалоге"
+        android:title="О диалоге"
         app:showAsAction="never" />
 
     <item
