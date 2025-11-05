@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Scrippy"
+rootProject.name = "scrippy"
 include(":app")

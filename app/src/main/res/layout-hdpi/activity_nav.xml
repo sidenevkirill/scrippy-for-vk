@@ -110,8 +110,8 @@
 
         <ImageButton
             android:id="@+id/miniPlayerNext"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/ic_vector_round_skip_next" />
 

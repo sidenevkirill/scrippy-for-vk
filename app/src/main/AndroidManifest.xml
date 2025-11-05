@@ -59,7 +59,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".WelcomeActivity"/>
         <activity android:name=".auth.PinLoginActivity"/>
         <activity android:name=".chat.ChatActivity"/>
         <activity android:name=".auth.AuthActivity"
@@ -97,11 +96,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <activity
-            android:name=".player.FullPlayerActivity"
-            android:theme="@style/FullPlayerTheme"
-            android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

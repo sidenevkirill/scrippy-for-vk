@@ -1,7 +1,5 @@
 package ru.lisdevs.messenger.stories;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -37,7 +35,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -45,50 +42,12 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.auth.AuthActivity;
+import ru.lisdevs.messenger.model.StoryItem;
 import ru.lisdevs.messenger.utils.TokenManager;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.bumptech.glide.Glide;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Call;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class FriendsStoriesFragment extends Fragment {
 

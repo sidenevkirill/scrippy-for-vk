@@ -15,6 +15,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import java.util.List;
 
 import ru.lisdevs.messenger.R;
+import ru.lisdevs.messenger.model.PostItem;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHolder> {
 

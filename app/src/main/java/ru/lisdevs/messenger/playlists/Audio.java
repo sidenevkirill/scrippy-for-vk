@@ -3,7 +3,7 @@ package ru.lisdevs.messenger.playlists;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Audio extends ru.lisdevs.messenger.music.Audio implements Parcelable {
+public class Audio extends ru.lisdevs.messenger.model.Audio implements Parcelable {
     private String artist;
     private String title;
     private String url;

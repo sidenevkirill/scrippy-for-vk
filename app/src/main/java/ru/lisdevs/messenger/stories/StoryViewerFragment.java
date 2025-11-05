@@ -41,6 +41,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.lisdevs.messenger.R;
+import ru.lisdevs.messenger.model.StoryItem;
 
 public class StoryViewerFragment extends Fragment {
     private ViewPager2 viewPager;

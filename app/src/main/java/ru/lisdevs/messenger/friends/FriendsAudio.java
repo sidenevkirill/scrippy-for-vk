@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import ru.lisdevs.messenger.R;
-import ru.lisdevs.messenger.music.Audio;
+import ru.lisdevs.messenger.model.Audio;
 import ru.lisdevs.messenger.music.AudioAdapter;
 
 public class FriendsAudio extends Fragment {

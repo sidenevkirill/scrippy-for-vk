@@ -1,4 +1,4 @@
-package ru.lisdevs.messenger.music;
+package ru.lisdevs.messenger.model;
 
 
 import android.os.Parcel;

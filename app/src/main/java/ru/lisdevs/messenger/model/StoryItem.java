@@ -1,4 +1,4 @@
-package ru.lisdevs.messenger.stories;
+package ru.lisdevs.messenger.model;
 
 import java.io.Serializable;
 

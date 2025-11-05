@@ -46,7 +46,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.api.Authorizer;
-import ru.lisdevs.messenger.music.Audio;
+import ru.lisdevs.messenger.model.Audio;
 import ru.lisdevs.messenger.music.AudioAdapter;
 import ru.lisdevs.messenger.service.MusicPlayerService;
 import ru.lisdevs.messenger.utils.TokenManager;

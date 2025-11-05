@@ -36,7 +36,7 @@ import java.util.Locale;
 
 import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.news.AudioAttachment;
-import ru.lisdevs.messenger.news.PostItem;
+import ru.lisdevs.messenger.model.PostItem;
 import ru.lisdevs.messenger.news.PostsAdapter;
 import ru.lisdevs.messenger.utils.TokenManager;
 

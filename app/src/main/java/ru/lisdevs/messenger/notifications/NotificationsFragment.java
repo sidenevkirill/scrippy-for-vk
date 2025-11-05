@@ -87,7 +87,6 @@ public class NotificationsFragment extends Fragment {
 
         showLoading(true);
 
-        // Используем тот же подход что и в MessagesFragment
         String url = "https://api.vk.com/method/notifications.get" +
                 "?access_token=" + accessToken +
                 "&v=5.199" +

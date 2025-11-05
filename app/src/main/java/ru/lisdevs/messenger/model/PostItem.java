@@ -1,12 +1,14 @@
-package ru.lisdevs.messenger.news;
+package ru.lisdevs.messenger.model;
 
 import java.util.List;
+
+import ru.lisdevs.messenger.news.AudioAttachment;
 
 public class PostItem {
     private String postId;
     private String text; // или message, content и т.п.
     private String date;
-    private List<AudioAttachment> audioAttachments;
+    private List<ru.lisdevs.messenger.news.AudioAttachment> audioAttachments;
     private String coverImageUrl;
     private String groupName;
 

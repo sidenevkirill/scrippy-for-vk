@@ -64,7 +64,7 @@ import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.api.Authorizer;
 import ru.lisdevs.messenger.artist.ArtistTracksFragment;
 import ru.lisdevs.messenger.artist.ArtistsAdapter;
-import ru.lisdevs.messenger.music.Search;
+import ru.lisdevs.messenger.model.Search;
 import ru.lisdevs.messenger.official.audios.Audio;
 import ru.lisdevs.messenger.service.MusicPlayerService;
 import ru.lisdevs.messenger.utils.TokenManager;
