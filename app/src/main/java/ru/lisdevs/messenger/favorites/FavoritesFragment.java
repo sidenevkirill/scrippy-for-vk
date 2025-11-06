@@ -211,7 +211,6 @@ public class FavoritesFragment extends Fragment {
     private void setupRecyclerView() {
         favoritesList = new ArrayList<>();
 
-        // Используем ваш FriendsAdapter
         friendsAdapter = new FriendsAdapter(
                 favoritesList, // обычные друзья
                 new ArrayList<>(), // важные друзья - пустой список
@@ -276,7 +275,6 @@ public class FavoritesFragment extends Fragment {
 
         showLoading(true);
 
-        // Сначала получаем общий список закладок
         Uri.Builder uriBuilder = Uri.parse("https://api.vk.com/method/fave.get")
                 .buildUpon()
                 .appendQueryParameter("access_token", accessToken)

@@ -70,22 +70,6 @@ public class AboutFragment extends Fragment {
         }
     }
 
-    private void addAppInfoCard(LinearLayout container) {
-        View appInfoCard = LayoutInflater.from(getContext())
-                .inflate(R.layout.card_app_info, container, false);
-
-        try {
-            PackageInfo pInfo = requireContext().getPackageManager()
-                    .getPackageInfo(requireContext().getPackageName(), 0);
-            TextView version = appInfoCard.findViewById(R.id.app_version);
-            version.setText(getString(R.string.version_template, pInfo.versionName));
-        } catch (PackageManager.NameNotFoundException e) {
-            // Версия не будет отображена
-        }
-
-        container.addView(appInfoCard);
-    }
-
     private void createMenuItems(LinearLayout container) {
         List<MenuItem> menuItems = Arrays.asList(
                 new MenuItem(
@@ -113,10 +97,16 @@ public class AboutFragment extends Fragment {
                         "https://t.me/lisdevs"
                 ),
                 new MenuItem(
+                        "Исходный код",
+                        "Github",
+                        R.drawable.github,
+                        "https://github.com/sidenevkirill/scrippy"
+                ),
+                new MenuItem(
                         "Ozon банк",
                         CARD_NUMBER,
                         R.drawable.heart_outline,
-                        "copy_card" // специальный идентификатор для копирования карты
+                        "copy_card"
                 )
         );
 
