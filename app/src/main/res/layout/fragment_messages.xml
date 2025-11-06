@@ -46,7 +46,6 @@
                             android:contentDescription="Аватар профиля"
                             android:background="@drawable/default_avatar"
                             app:shapeAppearanceOverlay="@style/CustomShapeImageAvatarMenu"
-                            android:stateListAnimator="@animator/clicked_menu"
                             android:padding="2dp"/>
 
                         <ImageView
