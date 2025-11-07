@@ -118,13 +118,6 @@ public class MyMusicPlaylistsFragment extends Fragment {
     private final String[] spinnerItems = {"Мои треки", "Рекомендации"};
     private boolean isRecommendationsMode = false;
 
-    // Блокировка рекламы
-    private Set<Long> blockedUserIds = new HashSet<>();
-    private static final String BLOCKED_USERS_BIN_ID = "68998155ae596e708fc73def";
-    private static final String JSONBIN_API_KEY = "$2a$10$47Va7lQp9sRxQH9c0Z6Hou3Zc7wZ57pDwaOXsWmCXOAmeIzIJDdf2";
-    private static final long SYNC_INTERVAL = TimeUnit.HOURS.toMillis(24);
-    private static final String PREFS_NAME = "MyPrefs";
-
     // Жанры
     private final Map<String, Integer> genres = new LinkedHashMap<String, Integer>() {{
         put("Все жанры", 0);

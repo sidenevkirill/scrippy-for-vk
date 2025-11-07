@@ -263,7 +263,7 @@ public class AlbumPageFragment extends Fragment {
 
     private void shareAlbum() {
         try {
-            String shareText = "Послушай альбом \"" + title + "\" в VK Music!";
+            String shareText = "Послушай альбом \"" + title + "\" в Scrippy!";
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
@@ -372,7 +372,7 @@ public class AlbumPageFragment extends Fragment {
 
         new OkHttpClient().newCall(new Request.Builder()
                         .url(url)
-                        .header("User-Agent", Authorizer.getKateUserAgent())
+                        .header("User-Agent", getUserAgent())
                         .build())
                 .enqueue(new Callback() {
                     @Override
@@ -432,6 +432,34 @@ public class AlbumPageFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    // Метод для определения User-Agent
+    private String getUserAgent() {
+        if (isAuthViaAuthActivity()) {
+            return "VKAndroidApp/1.0";
+        } else {
+            try {
+                return Authorizer.getKateUserAgent();
+            } catch (Exception e) {
+                // Fallback на стандартный User-Agent
+                return "VKAndroidApp/1.0";
+            }
+        }
+    }
+
+    // Метод для определения типа авторизации
+    private boolean isAuthViaAuthActivity() {
+        // Проверка через SharedPreferences
+        SharedPreferences prefs = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE);
+        String authType = prefs.getString("auth_type", null);
+
+        if (authType != null) {
+            return "AuthActivity".equals(authType);
+        }
+
+        // По умолчанию возвращаем true для совместимости
+        return true;
     }
 
     private void showBottomSheet(Audio audio) {
