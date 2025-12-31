@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" package="ru.lisdevs.messenger" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://schemas.android.com/tools ">
+
+    <!-- Разрешения -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Для Android 10+ используйте scoped storage вместо этих разрешений -->
+    <!-- Удалите или закомментируйте для targetSdk 30+ -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Фичи -->
+    <uses-feature android:name="android.hardware.nfc" android:required="true" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+
+    <!-- Для 64-битной поддержки -->
+    <uses-feature android:name="android.hardware.64bit" android:required="false" />
+
+    <!-- Для Android 15+ и 16КБ страниц -->
+    <supports-screens android:anyDensity="true" android:largeScreens="true"
+        android:normalScreens="true" android:smallScreens="true" android:xlargeScreens="true" />
+
+    <application android:name=".App" android:networkSecurityConfig="@xml/network_security_config"
+        android:allowBackup="true" android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules" android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name" android:usesCleartextTraffic="true"
+        android:supportsRtl="true" android:theme="@style/Theme.Scrippy"
+        android:requestLegacyExternalStorage="true" android:extractNativeLibs="true"
+        android:appComponentFactory="androidx.core.app.CoreComponentFactory" tools:targetApi="34"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <!-- Для работы с большими файлами в памяти -->
+        <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing" android:value="true" />
+
+        <meta-data android:name="android.webkit.WebView.MetricsOptOut" android:value="false" />
+
+        <!-- У вас ДВА одинаковых провайдера! Оставьте только один -->
+        <provider android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider" android:exported="false"
+            android:grantUriPermissions="true" tools:replace="android:authorities">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <service android:name=".service.MusicPlayerService" android:enabled="true"
+            android:exported="false" android:foregroundServiceType="mediaPlayback"
+            android:isolatedProcess="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_PLAYER_SERVICE" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".service.HlsService" android:enabled="true" android:exported="false"
+            android:process=":hls_service" />
+
+        <service android:name=".service.AlwaysOnlineService" android:enabled="true"
+            android:exported="false" android:foregroundServiceType="specialUse" />
+
+        <activity android:name=".MainBaseActivity" android:theme="@style/Base.Theme.Scrippy.Splash"
+            android:exported="true" android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Для глубоких ссылок -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="mooz" />
+            </intent-filter>
+        </activity>
+
+        <!-- Активности с явными экспортами -->
+        <activity android:name=".auth.PinLoginActivity" android:exported="false" />
+        <activity android:name=".chat.ChatActivity" android:exported="false" />
+        <activity android:name=".auth.AuthActivity" android:theme="@style/Base.Theme.Scrippy.Login"
+            android:exported="false" />
+        <activity android:name=".auth.AuthLocalActivity"
+            android:theme="@style/Base.Theme.Scrippy.Login" android:exported="false" />
+        <activity android:name=".VKAuthMaruActivity" android:exported="false" />
+        <activity android:name=".auth.KateAuthActivity" android:exported="false" />
+        <activity android:name=".VKAuthActivity" android:exported="false" />
+        <activity android:name=".BaseActivity" android:exported="false" />
+        <activity android:name=".LoginActivity" android:exported="false" />
+        <activity android:name=".RegistarationActivity" android:theme="@style/Wellcome.AppTheme"
+            android:exported="false" />
+        <activity android:name=".AuthRefreshToken" android:theme="@style/Base.Theme.Scrippy.Login"
+            android:exported="false" />
+        <activity android:name=".messages.stickers.StickerStoreActivity" android:exported="false" />
+        <activity android:name=".messages.stickers.StickerPackManagerActivity"
+            android:exported="false" />
+        <activity android:name=".messages.stickers.StickerPackViewActivity"
+            android:exported="false" />
+        <activity android:name=".player.VideoPlayerActivity" android:exported="false" />
+        <activity android:name=".auth.QRAuthActivity" android:exported="false" />
+        <activity android:name=".messages.AutoResponseActivity" android:exported="false" />
+        <activity android:name=".dialog.DialogActivity" android:theme="@style/Base.Theme.Scrippy"
+            android:exported="false" />
+
+        <!-- Яндекс реклама -->
+        <meta-data android:name="com.yandex.mobile.ads.AUTOMATIC_SDK_INITIALIZATION"
+            android:value="false" />
+
+        <!-- Для поддержки больших экранов -->
+        <meta-data android:name="android.max_aspect" android:value="2.4" />
+
+        <!-- Для Android 12+ переходы -->
+        <meta-data android:name="android.activity.windowingMode" android:value="1" />
+
+        <!-- Для API 34+ -->
+        <meta-data android:name="android.scheduling.RECEIVER_EXPORTED" android:value="false" />
+
+    </application>
+
+</manifest>

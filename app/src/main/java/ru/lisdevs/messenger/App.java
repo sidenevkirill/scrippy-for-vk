@@ -10,6 +10,7 @@ import com.google.android.material.color.DynamicColors;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import ru.lisdevs.messenger.utils.HttpClientSingleton;
 import ru.lisdevs.messenger.utils.ModernTLSSocketFactory;
 
 public class App extends Application {
@@ -26,14 +27,20 @@ public class App extends Application {
         // Применяем сохраненную тему перед установкой контента
         applySavedTheme();
 
-        // Применяем динамические цвета Material You
-        DynamicColors.applyToActivitiesIfAvailable(this);
+        //DynamicColors.applyToActivitiesIfAvailable(this);
 
         // Настройка TLS перед инициализацией рекламы
         configureTls();
 
         // Инициализация Yandex Mobile Ads
         // initializeYandexAds();
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        // Очищаем ресурсы HttpClient при завершении приложения
+        HttpClientSingleton.shutdown();
     }
 
     private void applySavedTheme() {

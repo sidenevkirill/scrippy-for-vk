@@ -51,6 +51,7 @@ public class StickerPackManagerActivity extends AppCompatActivity {
     // Ключи для SharedPreferences
     private static final String PREFS_NAME = "sticker_packs_prefs";
     private static final String PREF_ENABLED_PACKS = "enabled_sticker_packs";
+    private static final int DEFAULT_ENABLED_COUNT = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +109,8 @@ public class StickerPackManagerActivity extends AppCompatActivity {
                     allStickerPacks.add(pack);
                 }
             }
+
+            setupDefaultPackStates();
 
             runOnUiThread(() -> {
                 progressBar.setVisibility(View.GONE);
@@ -313,6 +316,58 @@ public class StickerPackManagerActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         sendBroadcastToUpdateStickers();
         Toast.makeText(this, "Все стикерпаки отключены", Toast.LENGTH_SHORT).show();
+    }
+
+    private void setupDefaultPackStates() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
+        // Проверяем, было ли уже инициализировано состояние пакетов
+        boolean isInitialized = prefs.getBoolean("is_initialized", false);
+
+        if (!isInitialized) {
+            // Инициализируем состояния пакетов в первый запуск
+            try {
+                JSONObject jsonObject = new JSONObject();
+
+                // Включаем первые DEFAULT_ENABLED_COUNT пакетов, остальные отключаем
+                for (int i = 0; i < allStickerPacks.size(); i++) {
+                    StickerPack pack = allStickerPacks.get(i);
+                    boolean isEnabled = i < DEFAULT_ENABLED_COUNT;
+                    jsonObject.put("pack_" + pack.getId(), isEnabled);
+                    pack.setEnabled(isEnabled);
+
+                    Log.d("StickerPackManager",
+                            "Пакет " + pack.getId() + " (" + pack.getTitle() + "): " +
+                                    (isEnabled ? "ВКЛЮЧЕН" : "ОТКЛЮЧЕН"));
+                }
+
+                // Сохраняем JSON
+                prefs.edit()
+                        .putString(PREF_ENABLED_PACKS, jsonObject.toString())
+                        .putBoolean("is_initialized", true)
+                        .apply();
+
+                Log.d("StickerPackManager",
+                        "Инициализировано по умолчанию: " + DEFAULT_ENABLED_COUNT +
+                                " пакетов включено, остальные отключены");
+
+            } catch (JSONException e) {
+                Log.e("StickerPackManager", "Ошибка инициализации состояний пакетов", e);
+                setAllPacksEnabled(true); // Запасной вариант: все включены
+            }
+        } else {
+            // Загружаем сохраненные состояния
+            for (StickerPack pack : allStickerPacks) {
+                pack.setEnabled(isStickerPackEnabled(pack.getId()));
+            }
+        }
+    }
+
+    private void setAllPacksEnabled(boolean enabled) {
+        for (StickerPack pack : allStickerPacks) {
+            pack.setEnabled(enabled);
+            saveStickerPackState(pack.getId(), enabled);
+        }
     }
 
     private void openStickerStore() {

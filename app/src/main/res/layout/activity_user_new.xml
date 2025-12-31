@@ -61,7 +61,7 @@
 
                         <!-- Cover -->
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:background="@color/color_primary"
+                            android:background="@color/card"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -77,7 +77,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="@id/cover"
-                            android:background="@color/color_primary"
+                            android:background="@drawable/bg_top_account"
                             android:layout_height="24dp"
                             android:layout_width="0dp"
                             android:id="@+id/coverForeground"/>

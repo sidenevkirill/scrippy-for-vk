@@ -1,6 +1,8 @@
 package ru.lisdevs.messenger.groups;
 
 import android.app.DownloadManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -49,6 +51,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import ru.lisdevs.messenger.BaseActivity;
 import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.api.Authorizer;
 import ru.lisdevs.messenger.model.Audio;
@@ -56,6 +59,7 @@ import ru.lisdevs.messenger.music.AudioAdapter;
 import ru.lisdevs.messenger.player.PlayerBottomSheetFragment;
 import ru.lisdevs.messenger.playlists.PlaylistTracksFragment;
 import ru.lisdevs.messenger.posts.GroupPostsFragment;
+import ru.lisdevs.messenger.search.MusicSearchFragment;
 import ru.lisdevs.messenger.service.MusicPlayerService;
 import ru.lisdevs.messenger.utils.TokenManager;
 
@@ -158,10 +162,20 @@ public class GroupDetailsFragment extends Fragment {
         // Обработка кликов на плейлисты
         playlistAdapter.setOnPlaylistClickListener((playlistId, ownerId, title) -> {
             Fragment fragment = PlaylistTracksFragment.newInstance(playlistId, ownerId, title);
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .addToBackStack(null)
-                    .commit();
+
+            // Используйте правильный менеджер фрагментов
+            if (getParentFragmentManager() != null) {
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                // Запасной вариант
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
         });
 
         // Настройка SwipeRefresh
@@ -498,11 +512,13 @@ public class GroupDetailsFragment extends Fragment {
             String url = track.optString("url");
             long ownerId = track.optLong("owner_id", 0);
             long audioId = track.optLong("id", 0);
+            int duration = track.optInt("duration", 0);
 
             if (url != null && !url.isEmpty()) {
                 Audio audio = new Audio(artist, title, url);
                 audio.setOwnerId(ownerId);
                 audio.setAudioId(audioId);
+                audio.setDuration(duration);
                 result.add(audio);
             }
         }
@@ -593,12 +609,27 @@ public class GroupDetailsFragment extends Fragment {
     }
 
     private void showBottomSheet(Audio audio) {
-        View view = getLayoutInflater().inflate(R.layout.bottom_sheet_audio, null);
+        View view = getLayoutInflater().inflate(R.layout.bottom_sheet_audio_del, null);
         BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
         dialog.setContentView(view);
 
         view.findViewById(R.id.buttonDownload).setOnClickListener(v -> {
             downloadTrack(audio);
+            dialog.dismiss();
+        });
+
+        view.findViewById(R.id.buttonAlbum).setOnClickListener(v -> {
+            addToMyMusic(audio);
+            dialog.dismiss();
+        });
+
+        view.findViewById(R.id.buttonSearch).setOnClickListener(v -> {
+            searchArtist(audio.getArtist());
+            dialog.dismiss();
+        });
+
+        view.findViewById(R.id.buttonCopy).setOnClickListener(v -> {
+            copyAudioLink(audio);
             dialog.dismiss();
         });
 
@@ -614,6 +645,75 @@ public class GroupDetailsFragment extends Fragment {
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED));
 
         Toast.makeText(getContext(), "Скачивание начато", Toast.LENGTH_SHORT).show();
+    }
+
+    private void searchArtist(String artistName) {
+        Intent searchIntent = new Intent(getActivity(), BaseActivity.class);
+        searchIntent.putExtra("search_query", artistName);
+        searchIntent.putExtra("fragment_to_load", "music_search");
+        searchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(searchIntent);
+        openMusicSearchFragment(artistName);
+    }
+
+    private void openMusicSearchFragment(String query) {
+        MusicSearchFragment searchFragment = new MusicSearchFragment();
+        Bundle args = new Bundle();
+        args.putString("search_query", query);
+        searchFragment.setArguments(args);
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, searchFragment)
+                .addToBackStack("my_music")
+                .commit();
+    }
+
+    private void copyAudioLink(Audio audio) {
+        String link = audio.getUrl();
+        ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Playlist Link", link);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(getContext(), "Ссылка скопирована", Toast.LENGTH_SHORT).show();
+    }
+
+    private void addToMyMusic(Audio audio) {
+        String accessToken = TokenManager.getInstance(getContext()).getToken();
+        String url = "https://api.vk.com/method/audio.add" +
+                "?access_token=" + accessToken +
+                "&owner_id=" + audio.getOwnerId() +
+                "&audio_id=" + audio.getAudioId() +
+                "&v=5.131";
+
+        new OkHttpClient().newCall(new Request.Builder()
+                        .url(url)
+                        .header("User-Agent", "VKAndroidApp/5.52-4543")
+                        .build())
+                .enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        showToast("Ошибка сети");
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        try {
+                            JSONObject json = new JSONObject(response.body().string());
+                            if (json.has("response")) {
+                                showToast("Трек добавлен");
+                            } else if (json.has("error")) {
+                                showToast("Ошибка: " + json.getJSONObject("error").optString("error_msg"));
+                            }
+                        } catch (JSONException e) {
+                            showToast("Ошибка обработки");
+                        }
+                    }
+                });
+    }
+
+    private void showToast(String message) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(() ->
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show());
+        }
     }
 
     private void showBottomSheetAccount() {

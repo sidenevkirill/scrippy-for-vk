@@ -763,7 +763,10 @@ public class GroupsTabFragment extends Fragment {
         args.putLong("group_id", groupId);
         args.putString("group_name", name);
 
-        Fragment fragment = new GroupDetailsFragment();
+        //музыка
+        //Fragment fragment = new GroupDetailsFragment();
+        //главная страница паблика
+        Fragment fragment = new GroupViewFragment();
         fragment.setArguments(args);
 
         requireActivity().getSupportFragmentManager()

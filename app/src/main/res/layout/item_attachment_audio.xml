@@ -11,8 +11,33 @@
         android:id="@+id/audioIcon"
         android:layout_width="36dp"
         android:layout_height="36dp"
+        android:visibility="gone"
         android:layout_gravity="center_vertical"
         android:src="@drawable/circle_play" />
+
+    <FrameLayout
+        android:id="@+id/audioPlayButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        >
+
+        <ProgressBar
+            android:id="@+id/audioProgressBar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/playIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/circle_play" />
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="0dp"

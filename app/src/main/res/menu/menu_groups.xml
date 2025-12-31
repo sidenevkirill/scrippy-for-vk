@@ -6,12 +6,20 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         android:icon="@drawable/searc"
         android:id="@+id/action_search"
+        android:visible="false"
         android:title="Поиск"
         app:showAsAction="always|collapseActionView" />
 
     <item
         android:icon="@drawable/dots"
         android:id="@+id/action_show_bottom_sheet"
+        android:visible="false"
         android:title="Отписаться"
         app:showAsAction="always" />
+
+    <item
+        android:icon="@drawable/content_copy"
+        android:id="@+id/menu_copy_id"
+        android:title="Скопировать"
+        app:showAsAction="never" />
 </menu>

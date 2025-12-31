@@ -297,6 +297,12 @@ public class DialogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     attachmentsRecyclerView.setVisibility(View.VISIBLE);
                     attachmentAdapter.setAttachments(message.getAttachments());
 
+                    // ВАЖНО: Передаем attachments в AudioPlayerHelper
+                    if (message.getAttachments() != null) {
+                        // Создаем общий список attachments для этого сообщения
+                        attachmentAdapter.setCurrentMessageAttachments(message.getAttachments());
+                    }
+
                     // Устанавливаем обработчик кликов для фото
                     attachmentAdapter.setOnPhotoClickListener(new AttachmentAdapter.OnPhotoClickListener() {
                         @Override

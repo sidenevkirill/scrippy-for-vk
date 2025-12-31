@@ -2,13 +2,21 @@ package ru.lisdevs.messenger.groups;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +29,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -33,522 +46,769 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import ru.lisdevs.messenger.R;
+import ru.lisdevs.messenger.friends.PhotoViewerFragment;
 import ru.lisdevs.messenger.news.AudioAttachment;
 import ru.lisdevs.messenger.model.PostItem;
 import ru.lisdevs.messenger.news.PostsAdapter;
+import ru.lisdevs.messenger.newsfeed.FeedAdapter;
+import ru.lisdevs.messenger.service.MusicPlayerService;
+import ru.lisdevs.messenger.utils.Authorizer;
 import ru.lisdevs.messenger.utils.TokenManager;
 
-public class GroupPostsFragment extends Fragment {
+public class GroupPostsFragment extends Fragment implements ServiceConnection {
+    private static final String TAG = "GroupPostsFragment";
+    private static final String VK_API_BASE_URL = "https://api.vk.com/method/";
+    private static final String VK_API_VERSION = "5.199";
 
     private long groupId;
     private String groupName;
-    private Toolbar toolbar;
-    private Button subscriptionIcon; // иконка подписки
-    private RecyclerView recyclerView;
-    private PostsAdapter adapter;
-    private List<PostItem> newsPosts = new ArrayList<>();
-    private SwipeRefreshLayout swipeRefreshLayout;
-
-    // Токен доступа ВК
-    private String accessToken;
-    private TextView resultTextView;
+    private RecyclerView postsRecycler;
+    private SwipeRefreshLayout swipeRefresh;
+    private FeedAdapter postAdapter;
+    private List<FeedAdapter.Post> posts = new ArrayList<>();
+    private MusicPlayerService musicService;
+    private boolean isBound = false;
+    private int currentPlayingPosition = -1;
+    private String currentAudioUrl = "";
+    private ProgressBar progressBar;
+    private TextView emptyView;
+    private int offset = 0;
+    private boolean isLoading = false;
+    private boolean hasMorePosts = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        // Инициализация accessToken здесь, чтобы был контекст
-        accessToken = TokenManager.getInstance(getContext()).getToken();
+
+        Bundle args = getArguments();
+        if (args != null) {
+            groupId = args.getLong("group_id");
+            groupName = args.getString("group_name");
+        }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_group_details, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_posts, container, false);
 
-        //resultTextView = view.findViewById(R.id.text_result);
-        //fetchPlaylists();
+        postsRecycler = view.findViewById(R.id.recyclerView);
+        swipeRefresh = view.findViewById(R.id.swipeRefreshLayout);
+        progressBar = view.findViewById(R.id.progressBar);
+        emptyView = view.findViewById(R.id.emptyStateView);
 
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
-        recyclerView = view.findViewById(R.id.recyclerView);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new PostsAdapter(newsPosts);
-        recyclerView.setAdapter(adapter);
-
-        // Настройка свайпа вниз для обновления
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            loadVKPostsWithAudio();
-        });
-
-        // Получение аргументов
-        if (getArguments() != null) {
-            groupId = getArguments().getLong("group_id");
-            groupName = getArguments().getString("group_name");
-        }
-
-        // Инициализация Toolbar
-        toolbar = view.findViewById(R.id.toolbar);
-        if (toolbar != null && getActivity() instanceof AppCompatActivity) {
-            AppCompatActivity activity = (AppCompatActivity) getActivity();
-            activity.setSupportActionBar(toolbar);
-            if (activity.getSupportActionBar() != null) {
-                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                activity.getSupportActionBar().setDisplayShowHomeEnabled(true);
-                activity.getSupportActionBar().setTitle(groupName);
+        // Создаем адаптер с обработчиком клика на фото
+        postAdapter = new FeedAdapter(posts, new FeedAdapter.AudioClickListener() {
+            @Override
+            public void onAudioClick(FeedAdapter.AudioAttachment audio, int position) {
+                if (isAdded()) {
+                    playAudio(audio.url, position, audio.title, audio.artist);
+                }
             }
-        }
 
-        // Инициализация UI элементов
-        TextView idTextView = view.findViewById(R.id.textViewId);
-        TextView nameTextView = view.findViewById(R.id.textViewName);
-        //subscriptionIcon = view.findViewById(R.id.subscription);
+            @Override
+            public void onPlayPauseClick(FeedAdapter.AudioAttachment audio, int position) {
+                if (!isAdded()) return;
 
-        // Отображение ID
-        String idDisplay = "@" + groupId;
-        idTextView.setText(idDisplay);
+                if (currentAudioUrl != null && currentAudioUrl.equals(audio.url)) {
+                    togglePlayPause();
+                } else {
+                    playAudio(audio.url, position, audio.title, audio.artist);
+                }
+            }
+        }, requireContext());
 
-        // Отображение названия группы
-        nameTextView.setText(groupName);
-
-        // Проверка подписки асинхронно
-        new CheckSubscriptionTask().execute();
-
-        // Обработка клика по иконке для смены статуса подписки
-        subscriptionIcon.setOnClickListener(v -> {
-            new ToggleSubscriptionTask().execute();
+        // Добавляем обработчик клика на фото
+        postAdapter.setPhotoClickListener((photoUrls, position) -> {
+            if (isAdded()) {
+                openPhotoViewer(photoUrls, position);
+            }
         });
 
-        loadVKPostsWithAudio();
+        // Добавляем обработчик клика на группу фото
+        postAdapter.setPhotoGroupClickListener((photoUrls, position) -> {
+            if (isAdded()) {
+                openPhotoViewer(photoUrls, position);
+            }
+        });
+
+        // Добавляем обработчик клика на группу
+        postAdapter.setGroupClickListener((clickedGroupId, clickedGroupName) -> {
+            if (isAdded()) {
+                openGroupDetails(clickedGroupId, clickedGroupName);
+            }
+        });
+
+        postsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        postsRecycler.setAdapter(postAdapter);
+
+        // Добавляем бесконечную прокрутку
+        postsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager != null && !isLoading && hasMorePosts) {
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                            && firstVisibleItemPosition >= 0
+                            && totalItemCount >= 10) {
+                        loadGroupPosts(false);
+                    }
+                }
+            }
+        });
+
+        swipeRefresh.setOnRefreshListener(() -> {
+            if (isAdded()) {
+                refreshGroupPosts();
+            }
+        });
+
+        if (isAdded()) {
+            Intent serviceIntent = new Intent(requireActivity(), MusicPlayerService.class);
+            requireActivity().bindService(serviceIntent, this, Context.BIND_AUTO_CREATE);
+        }
+
+        loadGroupPosts(true);
 
         return view;
     }
 
-    private void updateSubscriptionIcon(boolean isSubscribed) {
-        if (isSubscribed) {
-            subscriptionIcon.setVisibility(View.VISIBLE);
-            subscriptionIcon.setText("Вы подписаны");
-            //subscriptionIcon.setImageResource(R.drawable.check_circle); // замените на нужное изображение
+    // Метод для открытия просмотра фото
+    private void openPhotoViewer(List<String> photoUrls, int startPosition) {
+        if (photoUrls == null || photoUrls.isEmpty()) {
+            return;
+        }
+
+        PhotoViewerFragment fragment = PhotoViewerFragment.newInstance(
+                new ArrayList<>(photoUrls), startPosition
+        );
+
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment)
+                .addToBackStack("photo_viewer")
+                .commit();
+    }
+
+    private void openGroupDetails(long clickedGroupId, String clickedGroupName) {
+        // Если кликнули на другую группу, открываем ее
+        if (clickedGroupId != -groupId) {
+            GroupViewFragment fragment = GroupViewFragment.newInstance(Math.abs(clickedGroupId), clickedGroupName);
+
+            getParentFragmentManager().beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_right,
+                            R.anim.slide_out_left,
+                            R.anim.slide_in_left,
+                            R.anim.slide_out_right
+                    )
+                    .replace(R.id.container, fragment)
+                    .addToBackStack("group_view")
+                    .commit();
+        }
+    }
+
+    private void loadGroupPosts(boolean initialLoad) {
+        if (isLoading) return;
+
+        isLoading = true;
+
+        if (initialLoad) {
+            showLoading();
         } else {
-            subscriptionIcon.setVisibility(View.VISIBLE); // или GONE, если не хотите показывать
-            subscriptionIcon.setText("Подписаться");
-            //    subscriptionIcon.setImageResource(R.drawable.plus_circle);
-            // Или можно установить другое изображение для "неподписан"
-            // subscriptionIcon.setImageResource(R.drawable.subscribe_icon);
+            // Показываем индикатор загрузки внизу
+            if (postAdapter.getItemCount() > 0) {
+                posts.add(null); // Добавляем null для отображения индикатора загрузки
+                postAdapter.notifyItemInserted(posts.size() - 1);
+            }
         }
+
+        String accessToken = TokenManager.getInstance(requireContext()).getToken();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("owner_id", String.valueOf(-groupId)); // Для групп owner_id отрицательный
+        params.put("count", "50");
+        params.put("access_token", accessToken);
+        params.put("v", VK_API_VERSION);
+        params.put("extended", "1");
+        params.put("fields", "photo_100,first_name,last_name,name,screen_name");
+        params.put("attachments", "photo,audio,video,link,playlist");
+
+        if (!initialLoad) {
+            params.put("offset", String.valueOf(offset));
+        }
+
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                buildUrl("wall.get", params),
+                response -> {
+                    try {
+                        parseGroupPostsResponse(response, initialLoad);
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing group posts response", e);
+                        showError("Ошибка обработки постов");
+                    }
+                },
+                error -> {
+                    Log.e(TAG, "Group posts request error", error);
+                    showError("Ошибка загрузки постов");
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("User-Agent", getUserAgent());
+                return headers;
+            }
+        };
+
+        Volley.newRequestQueue(requireContext()).add(request);
     }
 
-    /**
-     * AsyncTask для проверки подписки пользователя на группу.
-     */
-    private class CheckSubscriptionTask extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            return checkUserSubscriptionToGroup();
-        }
-
-        @Override
-        protected void onPostExecute(Boolean isSubscribed) {
-            updateSubscriptionIcon(isSubscribed);
-            // Можно сохранить состояние в переменную, если нужно использовать позже
-            this.isSubscribed = isSubscribed;
-        }
-
-        private boolean isSubscribed = false;  // поле для хранения состояния
+    private void refreshGroupPosts() {
+        offset = 0;
+        hasMorePosts = true;
+        loadGroupPosts(true);
     }
 
-    /**
-     * AsyncTask для переключения статуса подписки.
-     */
-    private class ToggleSubscriptionTask extends AsyncTask<Void, Void, Boolean> {
+    private void parseGroupPostsResponse(String response, boolean initialLoad) throws JSONException {
+        isLoading = false;
 
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            boolean currentlySubscribed = checkUserSubscriptionToGroup();
-            boolean result;
-            if (currentlySubscribed) {
-                result = unsubscribeFromGroup();
+        // Убираем индикатор загрузки если был добавлен
+        if (!initialLoad && !posts.isEmpty() && posts.get(posts.size() - 1) == null) {
+            posts.remove(posts.size() - 1);
+            postAdapter.notifyItemRemoved(posts.size());
+        }
+
+        JSONObject json = new JSONObject(response);
+        if (json.has("error")) {
+            JSONObject error = json.getJSONObject("error");
+            String errorMsg = error.optString("error_msg", "Неизвестная ошибка");
+            int errorCode = error.optInt("error_code", 0);
+
+            if (errorCode == 15) {
+                showError("Доступ к группе запрещен");
+            } else if (errorCode == 30) {
+                showError("Профиль группы закрыт");
             } else {
-                result = subscribeToGroup();
+                showError("Ошибка API: " + errorMsg);
             }
-            return result;
+            return;
         }
 
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (success != null && success) {
-                Toast.makeText(getContext(),
-                        checkUserSubscriptionToGroup() ? "Подписка оформлена" : "Отписка выполнена",
-                        Toast.LENGTH_SHORT).show();
-                updateSubscriptionIcon(checkUserSubscriptionToGroup());
-            } else {
-                Toast.makeText(getContext(), "Ошибка при изменении подписки", Toast.LENGTH_SHORT).show();
+        JSONObject responseObj = json.getJSONObject("response");
+        int totalCount = responseObj.optInt("count", 0);
+
+        // Проверяем, есть ли еще посты для загрузки
+        int loadedPosts = responseObj.getJSONArray("items").length();
+        offset += loadedPosts;
+        hasMorePosts = offset < totalCount;
+
+        Map<Integer, Author> authors = parseAuthors(
+                responseObj.optJSONArray("profiles"),
+                responseObj.optJSONArray("groups")
+        );
+
+        JSONArray items = responseObj.getJSONArray("items");
+
+        if (initialLoad) {
+            posts.clear();
+        }
+
+        for (int i = 0; i < items.length(); i++) {
+            JSONObject postJson = items.getJSONObject(i);
+
+            if (postJson.optString("post_type", "").equals("suggest") ||
+                    postJson.optBoolean("marked_as_ads", false)) {
+                continue;
             }
 
-            // Обновляем иконку в зависимости от текущего статуса
-            new CheckSubscriptionTask().execute();
+            FeedAdapter.Post post = parsePost(postJson, authors);
+            if (post == null) continue;
+
+            if ((post.text != null && !post.text.isEmpty()) ||
+                    (post.attachments != null && !post.attachments.isEmpty()) ||
+                    (post.copyHistory != null && !post.copyHistory.isEmpty())) {
+                posts.add(post);
+            }
         }
+
+        if (posts.isEmpty()) {
+            showEmptyView("В этой группе пока нет постов");
+        } else {
+            showResults();
+        }
+
+        postAdapter.notifyDataSetChanged();
+        swipeRefresh.setRefreshing(false);
     }
 
-    /**
-     * Метод для проверки подписки через VK API.
-     */
-    private boolean checkUserSubscriptionToGroup() {
-        try {
-            String urlString = "https://api.vk.com/method/groups.isMember?group_id=" + groupId +
-                    "&access_token=" + accessToken +
-                    "&v=5.131";
+    private Map<Integer, Author> parseAuthors(JSONArray usersArray, JSONArray groupsArray) throws JSONException {
+        Map<Integer, Author> authors = new HashMap<>();
 
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(15000);
-            conn.setReadTimeout(15000);
-
-            int responseCode = conn.getResponseCode();
-
-            InputStream inputStream;
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                inputStream = conn.getInputStream();
-            } else {
-                inputStream = conn.getErrorStream();
-                // Можно дополнительно логировать ошибку или читать ответ для диагностики
-                return false;
+        if (usersArray != null) {
+            for (int i = 0; i < usersArray.length(); i++) {
+                JSONObject userJson = usersArray.getJSONObject(i);
+                Author author = new Author(
+                        userJson.getInt("id"),
+                        userJson.getString("first_name") + " " + userJson.getString("last_name"),
+                        userJson.getString("photo_100"),
+                        "user"
+                );
+                authors.put(author.id, author);
             }
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder responseBuilder = new StringBuilder();
-            String line;
-
-            while ((line = in.readLine()) != null) {
-                responseBuilder.append(line);
-            }
-            in.close();
-
-            String respStr = responseBuilder.toString();
-
-            JSONObject jsonObject = new JSONObject(respStr);
-
-            int responseValue = jsonObject.optJSONObject("response") != null ?
-                    jsonObject.optJSONObject("response").optInt("response", 0)
-                    : jsonObject.optInt("response", 0);
-
-            // В API groups.isMember ответ содержит поле "response": 1 или 0.
-            return responseValue == 1;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
+
+        if (groupsArray != null) {
+            for (int i = 0; i < groupsArray.length(); i++) {
+                JSONObject groupJson = groupsArray.getJSONObject(i);
+                Author author = new Author(
+                        -groupJson.getInt("id"),
+                        groupJson.getString("name"),
+                        groupJson.getString("photo_100"),
+                        "group"
+                );
+                authors.put(author.id, author);
+            }
+        }
+
+        return authors;
     }
 
-    /**
-     * Метод для подписки через VK API.
-     */
-    private boolean subscribeToGroup() {
-        try {
-            String urlString = "https://api.vk.com/method/groups.join?group_id=" + groupId +
-                    "&access_token=" + accessToken +
-                    "&v=5.131";
+    private FeedAdapter.Post parsePost(JSONObject postJson, Map<Integer, Author> authors) throws JSONException {
+        FeedAdapter.Post post = new FeedAdapter.Post();
 
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(15000);
-            conn.setReadTimeout(15000);
+        post.id = postJson.optInt("post_id", postJson.optInt("id", 0));
+        if (post.id == 0) return null;
 
-            int responseCode = conn.getResponseCode();
+        post.sourceId = postJson.optInt("source_id", postJson.optInt("owner_id", 0));
+        post.date = postJson.optLong("date", 0);
+        post.text = postJson.optString("text", "");
 
-            InputStream inputStream;
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                inputStream = conn.getInputStream();
-            } else {
-                inputStream = conn.getErrorStream();
-                return false;
+        JSONArray copyHistory = postJson.optJSONArray("copy_history");
+        if (copyHistory != null && copyHistory.length() > 0) {
+            post.copyHistory = new ArrayList<>();
+            for (int i = 0; i < copyHistory.length(); i++) {
+                JSONObject repostJson = copyHistory.getJSONObject(i);
+                FeedAdapter.Post repost = parsePost(repostJson, authors);
+                if (repost != null) post.copyHistory.add(repost);
             }
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder responseBuilder = new StringBuilder();
-            String line;
-
-            while ((line = in.readLine()) != null) {
-                responseBuilder.append(line);
-            }
-            in.close();
-
-            String respStr = responseBuilder.toString();
-
-            JSONObject jsonObject = new JSONObject(respStr);
-
-            int responseValue = jsonObject.optJSONObject("response") != null ?
-                    jsonObject.optJSONObject("response").optInt("response", 0)
-                    : jsonObject.optInt("response", 0);
-
-            return responseValue == 1;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
+
+        JSONObject likes = postJson.optJSONObject("likes");
+        JSONObject comments = postJson.optJSONObject("comments");
+        JSONObject reposts = postJson.optJSONObject("reposts");
+        JSONObject views = postJson.optJSONObject("views");
+
+        post.likesCount = likes != null ? likes.optInt("count", 0) : 0;
+        post.commentsCount = comments != null ? comments.optInt("count", 0) : 0;
+        post.repostsCount = reposts != null ? reposts.optInt("count", 0) : 0;
+        post.viewsCount = views != null ? views.optInt("count", 0) : 0;
+
+        // Для постов группы устанавливаем автором текущую группу
+        if (post.sourceId == -groupId) {
+            Author groupAuthor = new Author(
+                    (int) -groupId,
+                    groupName != null ? groupName : "Группа",
+                    "", // URL аватарки можно получить из GroupViewFragment
+                    "group"
+            );
+
+            post.author = new FeedAdapter.Author() {
+                @Override public int getId() { return groupAuthor.id; }
+                @Override public String getName() { return groupAuthor.name; }
+                @Override public String getPhoto() { return groupAuthor.photo; }
+                @Override public String getType() { return groupAuthor.type; }
+            };
+        } else if (post.sourceId != 0 && authors.containsKey(post.sourceId)) {
+            Author author = authors.get(post.sourceId);
+            post.author = new FeedAdapter.Author() {
+                @Override public int getId() { return author.id; }
+                @Override public String getName() { return author.name; }
+                @Override public String getPhoto() { return author.photo; }
+                @Override public String getType() { return author.type; }
+            };
+        }
+
+        post.attachments = parseAttachments(postJson.optJSONArray("attachments"));
+        return post;
     }
 
-    /**
-     * Метод для отписки через VK API.
-     */
-    private boolean unsubscribeFromGroup() {
-        try {
-            String urlString = "https://api.vk.com/method/groups.leave?group_id=" + groupId +
-                    "&access_token=" + accessToken +
-                    "&v=5.131";
+    private List<FeedAdapter.Attachment> parseAttachments(JSONArray attachmentsArray) throws JSONException {
+        List<FeedAdapter.Attachment> attachments = new ArrayList<>();
+        List<FeedAdapter.PhotoAttachment> photoGroup = new ArrayList<>();
 
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(15000);
-            conn.setReadTimeout(15000);
+        if (attachmentsArray != null) {
+            for (int i = 0; i < attachmentsArray.length(); i++) {
+                JSONObject attachmentJson = attachmentsArray.getJSONObject(i);
+                String type = attachmentJson.optString("type");
 
-            int responseCode = conn.getResponseCode();
+                if ("photo".equals(type)) {
+                    FeedAdapter.PhotoAttachment photo = parsePhotoAttachment(attachmentJson);
+                    if (photo != null) {
+                        photoGroup.add(photo);
+                    }
+                }
+                else if (!photoGroup.isEmpty()) {
+                    if (photoGroup.size() == 1) {
+                        attachments.add(photoGroup.get(0));
+                    } else {
+                        attachments.add(new FeedAdapter.PhotoGroupAttachment(new ArrayList<>(photoGroup)));
+                    }
+                    photoGroup.clear();
 
-            InputStream inputStream;
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                inputStream = conn.getInputStream();
-            } else {
-                inputStream = conn.getErrorStream();
-                return false;
+                    switch (type) {
+                        case "audio":
+                            FeedAdapter.AudioAttachment audio = parseAudioAttachment(attachmentJson);
+                            if (audio != null && audio.url != null && !audio.url.isEmpty()) {
+                                attachments.add(audio);
+                            }
+                            break;
+                        case "video":
+                            FeedAdapter.VideoAttachment video = parseVideoAttachment(attachmentJson);
+                            if (video != null) attachments.add(video);
+                            break;
+                        case "link":
+                            FeedAdapter.LinkAttachment link = parseLinkAttachment(attachmentJson);
+                            if (link != null) attachments.add(link);
+                            break;
+                        case "playlist":
+                            FeedAdapter.PlaylistAttachment playlist = parsePlaylistAttachment(attachmentJson);
+                            if (playlist != null) attachments.add(playlist);
+                            break;
+                    }
+                }
+                else {
+                    switch (type) {
+                        case "audio":
+                            FeedAdapter.AudioAttachment audio = parseAudioAttachment(attachmentJson);
+                            if (audio != null && audio.url != null && !audio.url.isEmpty()) {
+                                attachments.add(audio);
+                            }
+                            break;
+                        case "video":
+                            FeedAdapter.VideoAttachment video = parseVideoAttachment(attachmentJson);
+                            if (video != null) attachments.add(video);
+                            break;
+                        case "link":
+                            FeedAdapter.LinkAttachment link = parseLinkAttachment(attachmentJson);
+                            if (link != null) attachments.add(link);
+                            break;
+                        case "playlist":
+                            FeedAdapter.PlaylistAttachment playlist = parsePlaylistAttachment(attachmentJson);
+                            if (playlist != null) attachments.add(playlist);
+                            break;
+                    }
+                }
             }
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder responseBuilder = new StringBuilder();
-            String line;
-
-            while ((line = in.readLine()) != null) {
-                responseBuilder.append(line);
-            }
-            in.close();
-
-            String respStr = responseBuilder.toString();
-
-            JSONObject jsonObject = new JSONObject(respStr);
-
-            int responseValue = jsonObject.optJSONObject("response") != null ?
-                    jsonObject.optJSONObject("response").optInt("response", 0) :
-                    jsonObject.optInt("response", 0);
-
-            return responseValue == 1;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private void loadVKPostsWithAudio() {
-        // Показываем индикатор обновления
-        if (swipeRefreshLayout != null && !swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(true);
-        }
-        new GroupPostsFragment.LoadVKPostsWithAudioTask().execute();
-    }
-
-    // Асинхронная задача для загрузки постов с аудио
-    private class LoadVKPostsWithAudioTask extends AsyncTask<Void, Void, List<PostItem>> {
-
-        @Override
-        protected List<PostItem> doInBackground(Void... voids) {
-            String userId = getUserId(getContext()); // ваш ID
-            String accessToken = TokenManager.getInstance(getContext()).getToken(); // токен доступа
-            String apiVersion = "5.131";
-
-
-
-            try {
-                URL url = new URL("https://api.vk.com/method/wall.get" +
-                        "?owner_id=" + URLEncoder.encode(String.valueOf(-groupId), "UTF-8") +
-                        //  "?owner_id=" + URLEncoder.encode(String.valueOf(groupId), "UTF-8") +
-
-                        "&v=" + URLEncoder.encode(apiVersion, "UTF-8") +
-                        "&access_token=" + URLEncoder.encode(accessToken, "UTF-8"));
-
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                int responseCode = connection.getResponseCode();
-
-                InputStream inputStream;
-
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    inputStream = connection.getInputStream();
+            if (!photoGroup.isEmpty()) {
+                if (photoGroup.size() == 1) {
+                    attachments.add(photoGroup.get(0));
                 } else {
-                    inputStream = connection.getErrorStream();
+                    attachments.add(new FeedAdapter.PhotoGroupAttachment(new ArrayList<>(photoGroup)));
                 }
-
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder responseBuilder = new StringBuilder();
-                String line;
-
-                while ((line=reader.readLine()) != null) {
-                    responseBuilder.append(line);
-                }
-                reader.close();
-
-                String responseStr= responseBuilder.toString();
-
-                JSONObject jsonObject= new JSONObject(responseStr);
-
-                if (jsonObject.has("error")) {
-                    // Обработка ошибок API
-                    return null;
-                }
-
-                JSONObject responseObj= jsonObject.getJSONObject("response");
-                JSONArray itemsArray= responseObj.getJSONArray("items");
-
-                List<PostItem> postItems= new ArrayList<>();
-
-                for (int i=0; i<itemsArray.length(); i++) {
-                    JSONObject item= itemsArray.getJSONObject(i);
-
-                    List<AudioAttachment> audioList= new ArrayList<>();
-                    if (item.has("attachments")) {
-                        JSONArray attachments= item.getJSONArray("attachments");
-                        for (int j=0; j<attachments.length(); j++) {
-                            JSONObject attachment= attachments.getJSONObject(j);
-                            if ("audio".equals(attachment.optString("type"))) {
-                                JSONObject audioObj= attachment.optJSONObject("audio");
-                                if (audioObj != null) {
-                                    String artist= audioObj.optString("artist", "Неизвестный исполнитель");
-                                    String title= audioObj.optString("title", "Без названия");
-                                    String urlStr= audioObj.optString("url", "");
-                                    audioList.add(new AudioAttachment(artist, title, urlStr));
-                                }
-                            }
-                        }
-                    }
-
-                    String coverImageUrl = null;
-
-                    // Предположим, что у вас есть вложения типа "photo" (фотографии)
-                    if (item.has("attachments")) {
-                        JSONArray attachments= item.getJSONArray("attachments");
-                        for (int j=0; j<attachments.length(); j++) {
-                            JSONObject attachment= attachments.getJSONObject(j);
-                            if ("photo".equals(attachment.optString("type"))) {
-                                JSONArray photoSizes= attachment.optJSONObject("photo").optJSONArray("sizes");
-                                if (photoSizes != null && photoSizes.length() > 0) {
-                                    // Можно выбрать самое большое изображение или первое
-                                    JSONObject sizeObj= photoSizes.getJSONObject(photoSizes.length() - 1);
-                                    coverImageUrl= sizeObj.optString("url");
-                                    break; // если нужно только одно изображение
-                                }
-                            }
-                        }
-                    }
-
-                    String groupName = null;
-                    if (item.has("owner_id")) {
-                        long ownerId = item.getLong("owner_id");
-                        if (ownerId < 0) {
-                            String groupIdStr = String.valueOf(-ownerId);
-                            // Получить название группы по ID
-                            groupName = getGroupNameById(groupIdStr);
-                        } else {
-                            // Это может быть личный профиль или что-то другое
-                            // Можно оставить null или обработать отдельно
-                        }
-                    }
-
-                    // Добавляем только если есть аудио
-                    if (!audioList.isEmpty()) {
-                        String postId= item.optString("post_id", "без ID");
-                        String text= item.optString("text", "");
-                        long dateTimestamp= item.optLong("date", 0);
-                        String dateStr;
-
-                        if (dateTimestamp != 0) {
-                            Date dateObj= new Date(dateTimestamp*1000L);
-                            SimpleDateFormat sdf= new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
-                            dateStr= sdf.format(dateObj);
-                        } else {
-                            dateStr="Нет даты";
-                        }
-
-                        PostItem postItem = new PostItem(postId, text, dateStr, audioList, coverImageUrl, groupName);
-                        postItems.add(postItem);
-                    }
-                }
-
-                return postItems;
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
             }
         }
+        return attachments;
+    }
 
-        @Override
-        protected void onPostExecute(List<PostItem> result) {
-            super.onPostExecute(result);
-            if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                swipeRefreshLayout.setRefreshing(false); // скрываем индикатор обновления
+    private FeedAdapter.PhotoAttachment parsePhotoAttachment(JSONObject attachmentJson) throws JSONException {
+        try {
+            JSONObject photoJson = attachmentJson.getJSONObject("photo");
+            FeedAdapter.PhotoAttachment photo = new FeedAdapter.PhotoAttachment();
+
+            JSONArray sizes = photoJson.getJSONArray("sizes");
+            String bestUrl = "";
+            int bestWidth = 0;
+
+            for (int i = 0; i < sizes.length(); i++) {
+                JSONObject size = sizes.getJSONObject(i);
+                int width = size.optInt("width", 0);
+                if (width > bestWidth) {
+                    bestWidth = width;
+                    bestUrl = size.optString("url", "");
+                }
             }
-            if (result == null || result.isEmpty()) {
-                Toast.makeText(getContext(), "Нет данных или ошибка загрузки", Toast.LENGTH_LONG).show();
+
+            photo.url = bestUrl;
+            photo.width = bestWidth;
+            photo.height = photoJson.optInt("height", 0);
+            photo.text = photoJson.optString("text", "");
+            return photo;
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing photo attachment", e);
+            return null;
+        }
+    }
+
+    private FeedAdapter.AudioAttachment parseAudioAttachment(JSONObject attachmentJson) throws JSONException {
+        try {
+            JSONObject audioJson = attachmentJson.getJSONObject("audio");
+            FeedAdapter.AudioAttachment audio = new FeedAdapter.AudioAttachment();
+            audio.id = audioJson.optInt("id", 0);
+            audio.ownerId = audioJson.optInt("owner_id", 0);
+            audio.artist = audioJson.optString("artist", "");
+            audio.title = audioJson.optString("title", "");
+            audio.duration = audioJson.optInt("duration", 0);
+            audio.url = audioJson.optString("url", "");
+            return audio;
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing audio attachment", e);
+            return null;
+        }
+    }
+
+    private FeedAdapter.VideoAttachment parseVideoAttachment(JSONObject attachmentJson) throws JSONException {
+        try {
+            JSONObject videoJson = attachmentJson.getJSONObject("video");
+            FeedAdapter.VideoAttachment video = new FeedAdapter.VideoAttachment();
+            video.id = videoJson.optInt("id", 0);
+            video.ownerId = videoJson.optInt("owner_id", 0);
+            video.title = videoJson.optString("title", "");
+            video.duration = videoJson.optInt("duration", 0);
+            video.views = videoJson.optInt("views", 0);
+
+            if (videoJson.has("image")) {
+                JSONArray images = videoJson.getJSONArray("image");
+                for (int i = 0; i < images.length(); i++) {
+                    JSONObject image = images.getJSONObject(i);
+                    if (image.optInt("width", 0) >= 320) {
+                        video.previewUrl = image.optString("url", "");
+                        break;
+                    }
+                }
+            }
+            return video;
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing video attachment", e);
+            return null;
+        }
+    }
+
+    private FeedAdapter.LinkAttachment parseLinkAttachment(JSONObject attachmentJson) throws JSONException {
+        try {
+            JSONObject linkJson = attachmentJson.getJSONObject("link");
+            FeedAdapter.LinkAttachment link = new FeedAdapter.LinkAttachment();
+            link.url = linkJson.optString("url", "");
+            link.title = linkJson.optString("title", "");
+            link.description = linkJson.optString("description", "");
+
+            if (linkJson.has("photo")) {
+                JSONObject photo = linkJson.getJSONObject("photo");
+                JSONArray sizes = photo.getJSONArray("sizes");
+                for (int i = 0; i < sizes.length(); i++) {
+                    JSONObject size = sizes.getJSONObject(i);
+                    if (size.optInt("width", 0) >= 100) {
+                        link.previewUrl = size.optString("url", "");
+                        break;
+                    }
+                }
+            }
+            return link;
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing link attachment", e);
+            return null;
+        }
+    }
+
+    private FeedAdapter.PlaylistAttachment parsePlaylistAttachment(JSONObject attachmentJson) throws JSONException {
+        try {
+            JSONObject playlistJson = attachmentJson.getJSONObject("playlist");
+            FeedAdapter.PlaylistAttachment playlist = new FeedAdapter.PlaylistAttachment();
+
+            playlist.id = playlistJson.optInt("id", 0);
+            playlist.ownerId = playlistJson.optInt("owner_id", 0);
+            playlist.title = playlistJson.optString("title", "");
+            playlist.description = playlistJson.optString("description", "");
+            playlist.count = playlistJson.optInt("count", 0);
+
+            if (playlistJson.has("photo")) {
+                JSONObject photo = playlistJson.getJSONObject("photo");
+                JSONArray sizes = photo.getJSONArray("sizes");
+                for (int i = 0; i < sizes.length(); i++) {
+                    JSONObject size = sizes.getJSONObject(i);
+                    if (size.optInt("width", 0) >= 300) {
+                        playlist.photoUrl = size.optString("url", "");
+                        break;
+                    }
+                }
+            }
+
+            if (playlistJson.has("owner")) {
+                JSONObject owner = playlistJson.getJSONObject("owner");
+                playlist.ownerName = owner.optString("name", "");
+            }
+
+            return playlist;
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing playlist attachment", e);
+            return null;
+        }
+    }
+
+    private void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+        postsRecycler.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        swipeRefresh.setRefreshing(true);
+    }
+
+    private void showResults() {
+        progressBar.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        postsRecycler.setVisibility(View.VISIBLE);
+        swipeRefresh.setRefreshing(false);
+    }
+
+    private void showEmptyView(String message) {
+        progressBar.setVisibility(View.GONE);
+        postsRecycler.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+        emptyView.setText(message);
+        swipeRefresh.setRefreshing(false);
+    }
+
+    // Метод для получения User-Agent
+    private String getUserAgent() {
+        if (isAuthViaAuthActivity()) {
+            return "VKAndroidApp/1.0";
+        } else {
+            try {
+                return Authorizer.getKateUserAgent();
+            } catch (Exception e) {
+                // Fallback на стандартный User-Agent
+                return "VKAndroidApp/1.0";
+            }
+        }
+    }
+
+    private boolean isAuthViaAuthActivity() {
+        if (getContext() == null) return true;
+
+        SharedPreferences prefs = getContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE);
+        String authType = prefs.getString("auth_type", null);
+
+        if (authType != null) {
+            return "AuthActivity".equals(authType);
+        }
+
+        // По умолчанию возвращаем true для совместимости
+        return true;
+    }
+
+    public void playAudio(String url, int position, String title, String artist) {
+        if (isBound && musicService != null) {
+            if (currentAudioUrl.equals(url)) {
+                togglePlayPause();
                 return;
             }
-            newsPosts.clear();
-            newsPosts.addAll(result);
-            adapter.notifyDataSetChanged();
+
+            currentAudioUrl = url;
+            currentPlayingPosition = position;
+
+            Intent playIntent = new Intent(getActivity(), MusicPlayerService.class);
+            playIntent.setAction("PLAY");
+            playIntent.putExtra("URL", url);
+            playIntent.putExtra("TITLE", title);
+            playIntent.putExtra("ARTIST", artist);
+            getActivity().startService(playIntent);
+
+            postAdapter.notifyItemChanged(position);
         }
     }
 
-    private String getGroupNameById(String groupId) {
-        // Можно реализовать через кеш или синхронный вызов
-        // Для простоты — сделать синхронный вызов (или асинхронно и кешировать)
-        String accessToken = TokenManager.getInstance(getContext()).getToken();
-        try {
-            String urlStr = "https://api.vk.com/method/groups.getById" +
-                    "?group_ids=" + URLEncoder.encode(groupId, "UTF-8") +
-                    "&v=5.131&access_token=" + URLEncoder.encode(accessToken, "UTF-8");
-            URL url = new URL(urlStr);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            InputStream inputStream = connection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder responseBuilder = new StringBuilder();
-            String line;
-            while ((line=reader.readLine()) != null) {
-                responseBuilder.append(line);
-            }
-            reader.close();
+    public void togglePlayPause() {
+        if (isBound && musicService != null) {
+            Intent toggleIntent = new Intent(getActivity(), MusicPlayerService.class);
+            toggleIntent.setAction("TOGGLE");
+            getActivity().startService(toggleIntent);
 
-            JSONObject jsonResponse = new JSONObject(responseBuilder.toString());
-            if (jsonResponse.has("response")) {
-                JSONArray respArray = jsonResponse.getJSONArray("response");
-                if (respArray.length() > 0) {
-                    JSONObject groupObj = respArray.getJSONObject(0);
-                    return groupObj.optString("name", "Неизвестная группа");
-                }
+            if (currentPlayingPosition != -1) {
+                postAdapter.notifyItemChanged(currentPlayingPosition);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return "Неизвестная группа";
     }
 
-    public String getUserId(Context context) {
-        // Предполагается, что у вас есть сохранённый user_id в SharedPreferences
-        return context.getSharedPreferences("VK", MODE_PRIVATE).getString("user_id", null);
+    public boolean isCurrentPlaying(int position, String url) {
+        return position == currentPlayingPosition &&
+                currentAudioUrl.equals(url) &&
+                isBound &&
+                musicService != null &&
+                musicService.isPlaying();
     }
 
-    public static GroupDetailsFragment newInstance(long groupId, String groupName) {
-        GroupDetailsFragment fragment = new GroupDetailsFragment();
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        MusicPlayerService.LocalBinder binder = (MusicPlayerService.LocalBinder) service;
+        musicService = binder.getService();
+        isBound = true;
+
+        if (postAdapter != null) {
+            postAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        isBound = false;
+        musicService = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (isBound) {
+            getActivity().unbindService(this);
+            isBound = false;
+        }
+    }
+
+    private void showError(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        showEmptyView(message);
+    }
+
+    private String buildUrl(String method, Map<String, String> params) {
+        Uri.Builder builder = Uri.parse(VK_API_BASE_URL + method).buildUpon();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            builder.appendQueryParameter(entry.getKey(), entry.getValue());
+        }
+        return builder.build().toString();
+    }
+
+    // Статический метод для создания нового экземпляра фрагмента
+    public static GroupPostsFragment newInstance(long groupId, String groupName) {
+        GroupPostsFragment fragment = new GroupPostsFragment();
         Bundle args = new Bundle();
         args.putLong("group_id", groupId);
         args.putString("group_name", groupName);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private static class Author {
+        public int id;
+        public String name;
+        public String photo;
+        public String type;
+
+        public Author(int id, String name, String photo, String type) {
+            this.id = id;
+            this.name = name;
+            this.photo = photo;
+            this.type = type;
+        }
     }
 }

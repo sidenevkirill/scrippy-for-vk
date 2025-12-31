@@ -41,6 +41,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import ru.lisdevs.messenger.R;
+import ru.lisdevs.messenger.api.Authorizer;
 import ru.lisdevs.messenger.groups.GroupsTabFragment;
 import ru.lisdevs.messenger.dialog.DialogActivity;
 import ru.lisdevs.messenger.search.GroupsSearchFragment;
@@ -478,13 +479,13 @@ public class FriendsFragment extends Fragment {
                     .newBuilder()
                     .addQueryParameter("access_token", accessToken)
                     .addQueryParameter("fields", "first_name,last_name,photo_100,online")
-                    .addQueryParameter("v", "5.131")
+                    .addQueryParameter("v", "5.199")
                     .addQueryParameter("count", "1000")
                     .build();
 
             Request request = new Request.Builder()
                     .url(url)
-                    .header("User-Agent", "VKAndroidApp/1.0")
+                    .header("User-Agent", getUserAgent())
                     .build();
 
             httpClient.newCall(request).enqueue(new okhttp3.Callback() {
@@ -553,6 +554,32 @@ public class FriendsFragment extends Fragment {
                     }
                 }
             });
+        }
+
+        private String getUserAgent() {
+            if (isAuthViaAuthActivity()) {
+                return "VKAndroidApp/5.52-4543";
+            } else {
+                try {
+                    return Authorizer.getKateUserAgent();
+                } catch (Exception e) {
+                    // Fallback на стандартный User-Agent
+                    return "VKAndroidApp/5.52-4543";
+                }
+            }
+        }
+
+        private boolean isAuthViaAuthActivity() {
+            // Проверка через SharedPreferences
+            SharedPreferences prefs = requireContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE);
+            String authType = prefs.getString("auth_type", null);
+
+            if (authType != null) {
+                return "AuthActivity".equals(authType);
+            }
+
+            // По умолчанию возвращаем true для совместимости
+            return true;
         }
 
         private List<VKFriend> parseFriendsResponse(JSONObject jsonResponse) throws JSONException {

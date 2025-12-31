@@ -51,6 +51,7 @@
             android:layout_height="wrap_content"
             android:textColor="#666"
             android:textSize="12sp"
+            android:layout_marginBottom="4dp"
             android:visibility="gone" />
 
         <RelativeLayout
@@ -64,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/messageMeta"
-                android:textColor="@android:color/black"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
 
@@ -83,8 +84,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:layout_marginTop="4dp"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="12dp"
                 android:orientation="horizontal">
 
                 <TextView

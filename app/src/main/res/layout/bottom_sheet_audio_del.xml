@@ -46,6 +46,11 @@
         android:drawableStart="@drawable/plus"
         android:drawablePadding="8dp"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
+
     <Button
         android:id="@+id/buttonEdit"
         android:layout_width="match_parent"
@@ -88,6 +93,11 @@
         android:padding="16dp"
         android:drawableStart="@drawable/link_variant"
         android:drawablePadding="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/spinner_light_stroke"/>
 
     <TextView
         android:id="@+id/buttonSearch"

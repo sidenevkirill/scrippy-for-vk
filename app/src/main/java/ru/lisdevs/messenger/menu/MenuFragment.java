@@ -3,7 +3,9 @@ package ru.lisdevs.messenger.menu;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +42,7 @@ import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.about.AboutFragment;
 import ru.lisdevs.messenger.algoritms.AlgoritmPlaylistsFragment;
 import ru.lisdevs.messenger.api.Authorizer;
+import ru.lisdevs.messenger.auth.QRAuthActivity;
 import ru.lisdevs.messenger.genre.GenreFragment;
 import ru.lisdevs.messenger.groups.GroupsTabsFragment;
 import ru.lisdevs.messenger.local.SaveMusicFragment;
@@ -102,8 +105,8 @@ public class MenuFragment extends Fragment {
         menuItems.add(new MenuItem("Музыка", R.drawable.my, MusicTabsFragment.class));
         //menuItems.add(new MenuItem("Рекомендации", R.drawable.rss, RecommendationFragment.class));
         //menuItems.add(new MenuItem("Поиск музыки", R.drawable.searc, MusicSearchFragment.class));
-       // menuItems.add(new MenuItem("Жанры", R.drawable.star, GenreFragment.class));
-       // menuItems.add(new MenuItem("Алгоритмы", R.drawable.compass_outline, AlgoritmPlaylistsFragment.class));
+        // menuItems.add(new MenuItem("Жанры", R.drawable.star, GenreFragment.class));
+        // menuItems.add(new MenuItem("Алгоритмы", R.drawable.compass_outline, AlgoritmPlaylistsFragment.class));
         //menuItems.add(new MenuItem("Загрузки", R.drawable.save_black, SaveSectionFragment.class));
         menuItems.add(new MenuItem("Группы", R.drawable.group_24px, GroupsTabsFragment.class));
         menuItems.add(new MenuItem("Лента", R.drawable.rss, NewsFeedFragment.class));
@@ -113,6 +116,10 @@ public class MenuFragment extends Fragment {
         //menuItems.add(new MenuItem("Группы", R.drawable.account_outline, GroupsSearchFragment.class));
         menuItems.add(new MenuItem("Настройки", R.drawable.ic_vector_outline_settings, SettingsFragment.class));
         menuItems.add(new MenuItem("О приложении", R.drawable.information_outline, AboutFragment.class));
+
+        // НОВЫЙ ПУНКТ МЕНЮ - Войти через QR-код
+        menuItems.add(new MenuItem("Войти через QR-код", R.drawable.ic_qr_code, null, true));
+
         menuItems.add(new MenuItem("Закрыть", R.drawable.close, null));
 
         // Добавляем элементы в меню
@@ -271,7 +278,6 @@ public class MenuFragment extends Fragment {
         });
     }
 
-
     private View createMenuItemView(MenuItem item) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.item_menu, null);
 
@@ -281,15 +287,36 @@ public class MenuFragment extends Fragment {
         icon.setImageResource(item.getIconRes());
         text.setText(item.getTitle());
 
+        // Устанавливаем обработчик клика в зависимости от типа пункта меню
         view.setOnClickListener(v -> {
-            if (item.getFragmentClass() == null) {
+            if (item.isActivityItem()) {
+                // Для Activity (QR-авторизация)
+                openQRAuthActivity();
+            } else if (item.getFragmentClass() == null) {
+                // Для закрытия приложения
                 closeApplication();
             } else {
+                // Для фрагментов
                 navigateToFragment(item.getFragmentClass());
             }
         });
 
         return view;
+    }
+
+    // НОВЫЙ МЕТОД: Открытие Activity для QR-авторизации
+    private void openQRAuthActivity() {
+        try {
+            Intent intent = new Intent(requireContext(), QRAuthActivity.class);
+            startActivity(intent);
+
+            // Добавляем анимацию перехода
+            requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        } catch (Exception e) {
+            // Если Activity не найдена, показываем сообщение
+            Toast.makeText(requireContext(), "Функция QR-авторизации недоступна", Toast.LENGTH_SHORT).show();
+            Log.e("MenuFragment", "Error opening QRAuthActivity: " + e.getMessage());
+        }
     }
 
     private void closeApplication() {
@@ -316,15 +343,26 @@ public class MenuFragment extends Fragment {
         }
     }
 
+    // ОБНОВЛЕННЫЙ КЛАСС MenuItem с поддержкой Activity
     private static class MenuItem {
         private final String title;
         private final int iconRes;
         private final Class<? extends Fragment> fragmentClass;
+        private final boolean isActivityItem;
 
         public MenuItem(String title, int iconRes, Class<? extends Fragment> fragmentClass) {
             this.title = title;
             this.iconRes = iconRes;
             this.fragmentClass = fragmentClass;
+            this.isActivityItem = false;
+        }
+
+        // Новый конструктор для Activity
+        public MenuItem(String title, int iconRes, Class<? extends Fragment> fragmentClass, boolean isActivityItem) {
+            this.title = title;
+            this.iconRes = iconRes;
+            this.fragmentClass = fragmentClass;
+            this.isActivityItem = isActivityItem;
         }
 
         public String getTitle() {
@@ -337,6 +375,10 @@ public class MenuFragment extends Fragment {
 
         public Class<? extends Fragment> getFragmentClass() {
             return fragmentClass;
+        }
+
+        public boolean isActivityItem() {
+            return isActivityItem;
         }
     }
 }

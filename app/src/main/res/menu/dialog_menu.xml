@@ -4,31 +4,26 @@
 
     <item
         android:id="@+id/menu_search"
-        android:icon="@drawable/ic_search"
         android:title="Поиск по сообщениям"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_clear"
-        android:icon="@drawable/close"
         android:title="Очистить историю"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_attachmennt"
-        android:icon="@drawable/information_outline"
         android:title="Вложения"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_info"
-        android:icon="@drawable/information_outline"
         android:title="О диалоге"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_manage_stickers"
-        android:icon="@drawable/ic_info"
         android:visible="false"
         android:title="Управление стикерпаками"
         app:showAsAction="never" />

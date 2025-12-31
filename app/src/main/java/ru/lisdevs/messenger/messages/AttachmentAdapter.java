@@ -1,11 +1,14 @@
 package ru.lisdevs.messenger.messages;
 
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +20,7 @@ import java.util.Locale;
 
 import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.model.Attachment;
-
+import ru.lisdevs.messenger.utils.AudioPlayerHelper;
 
 public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_PHOTO = 0;
@@ -25,10 +28,19 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int TYPE_AUDIO = 2;
     private static final int TYPE_AUDIO_MESSAGE = 3;
     private static final int TYPE_STICKER = 4;
-    private static final int TYPE_GRAFFITI = 5; // Добавлен тип для граффити
+    private static final int TYPE_GRAFFITI = 5;
 
     private List<Attachment> attachments = new ArrayList<>();
     private OnPhotoClickListener onPhotoClickListener;
+    private List<Attachment> currentMessageAttachments;
+
+    private Context context;
+    private int currentPlayingPosition = -1;
+    private AudioPlayerHelper audioPlayerHelper;
+
+    public void setCurrentMessageAttachments(List<Attachment> attachments) {
+        this.currentMessageAttachments = attachments;
+    }
 
     public interface OnPhotoClickListener {
         void onPhotoClick(Attachment.Photo photo, int position);
@@ -49,12 +61,10 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         Attachment attachment = attachments.get(position);
         String type = attachment.getType();
 
-        // Проверяем, является ли документ граффити
         if ("doc".equals(type) && attachment.getDoc() != null && "graffiti".equals(attachment.getDoc().getType())) {
             return TYPE_GRAFFITI;
         }
 
-        // Проверяем, является ли вложение граффити
         if ("graffiti".equals(type)) {
             return TYPE_GRAFFITI;
         }
@@ -78,7 +88,9 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        context = parent.getContext();
+        audioPlayerHelper = AudioPlayerHelper.getInstance(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
 
         switch (viewType) {
             case TYPE_PHOTO:
@@ -111,16 +123,16 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         switch (holder.getItemViewType()) {
             case TYPE_PHOTO:
-                ((PhotoViewHolder) holder).bind(attachment.getPhoto());
+                ((PhotoViewHolder) holder).bind(attachment.getPhoto(), position);
                 break;
             case TYPE_DOCUMENT:
-                ((DocumentViewHolder) holder).bind(attachment.getDoc());
+                ((DocumentViewHolder) holder).bind(attachment.getDoc(), position);
                 break;
             case TYPE_AUDIO:
-                ((AudioViewHolder) holder).bind(attachment.getAudio());
+                ((AudioViewHolder) holder).bind(attachment.getAudio(), position);
                 break;
             case TYPE_AUDIO_MESSAGE:
-                ((AudioMessageViewHolder) holder).bind(attachment.getDoc());
+                ((AudioMessageViewHolder) holder).bind(attachment.getDoc(), position);
                 break;
             case TYPE_STICKER:
                 ((StickerViewHolder) holder).bind(attachment.getPhoto());
@@ -134,6 +146,17 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemCount() {
         return attachments.size();
+    }
+
+    public void updatePlayingState(int position, boolean isPlaying) {
+        if (currentPlayingPosition != -1 && currentPlayingPosition != position) {
+            notifyItemChanged(currentPlayingPosition);
+        }
+
+        currentPlayingPosition = isPlaying ? position : -1;
+        if (position != -1) {
+            notifyItemChanged(position);
+        }
     }
 
     // ViewHolder для фотографий
@@ -157,7 +180,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             });
         }
 
-        void bind(Attachment.Photo photo) {
+        void bind(Attachment.Photo photo, int position) {
             if (photo != null) {
                 String imageUrl = photo.getPreviewUrl();
                 if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -200,7 +223,6 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (position != RecyclerView.NO_POSITION) {
                     Attachment attachment = attachments.get(position);
                     if (onPhotoClickListener != null) {
-                        // Для граффити используем фото из вложения
                         if (attachment.getPhoto() != null) {
                             onPhotoClickListener.onPhotoClick(attachment.getPhoto(), position);
                         }
@@ -210,12 +232,10 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         void bind(Attachment attachment) {
-            // Показываем прогресс-бар при загрузке
             if (progressBar != null) {
                 progressBar.setVisibility(View.VISIBLE);
             }
 
-            // Показываем лейбл граффити
             if (graffitiLabel != null) {
                 graffitiLabel.setVisibility(View.GONE);
                 graffitiLabel.setText("😊 Стикер");
@@ -223,24 +243,20 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             String imageUrl = null;
 
-            // Пытаемся получить изображение граффити
             if (attachment.getPhoto() != null) {
                 imageUrl = attachment.getPhoto().getBestQualityUrl();
             }
 
-            // Если нет изображения в photo, но есть документ с граффити
             if ((imageUrl == null || imageUrl.isEmpty()) && attachment.getDoc() != null) {
                 imageUrl = attachment.getDoc().getUrl();
             }
 
-            // Устанавливаем размеры для граффити
             ViewGroup.LayoutParams params = imageView.getLayoutParams();
             int targetSize = (int) (200 * itemView.getContext().getResources().getDisplayMetrics().density);
             params.width = targetSize;
             params.height = targetSize;
             imageView.setLayoutParams(params);
 
-            // Загружаем изображение граффити
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 Picasso.get()
                         .load(imageUrl)
@@ -265,7 +281,6 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                             }
                         });
             } else {
-                // Если URL нет, показываем placeholder
                 if (progressBar != null) {
                     progressBar.setVisibility(View.GONE);
                 }
@@ -275,7 +290,7 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     // ViewHolder для документов
-    static class DocumentViewHolder extends RecyclerView.ViewHolder {
+    class DocumentViewHolder extends RecyclerView.ViewHolder {
         ImageView iconView;
         TextView titleText;
         TextView sizeText;
@@ -289,9 +304,8 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             extText = itemView.findViewById(R.id.docExt);
         }
 
-        void bind(Attachment.Document doc) {
+        void bind(Attachment.Document doc, int position) {
             if (doc != null) {
-                // Пропускаем отображение документов-граффити (они обрабатываются в GraffitiViewHolder)
                 if ("graffiti".equals(doc.getType())) {
                     itemView.setVisibility(View.GONE);
                     return;
@@ -299,7 +313,6 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 itemView.setVisibility(View.VISIBLE);
 
-                // Устанавливаем иконку в зависимости от типа документа
                 int iconRes = getDocumentIcon(doc.getExt(), doc.getType());
                 iconView.setImageResource(iconRes);
 
@@ -339,54 +352,220 @@ public class AttachmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     // ViewHolder для аудио
-    static class AudioViewHolder extends RecyclerView.ViewHolder {
-        ImageView iconView;
+    class AudioViewHolder extends RecyclerView.ViewHolder {
+        ImageView playButton;
         TextView titleText;
         TextView artistText;
         TextView durationText;
+        ProgressBar progressBar;
+        SeekBar seekBar;
 
         public AudioViewHolder(@NonNull View itemView) {
             super(itemView);
-            iconView = itemView.findViewById(R.id.audioIcon);
+            playButton = itemView.findViewById(R.id.playIcon);
             titleText = itemView.findViewById(R.id.audioTitle);
             artistText = itemView.findViewById(R.id.audioArtist);
             durationText = itemView.findViewById(R.id.audioDuration);
+            progressBar = itemView.findViewById(R.id.audioProgressBar);
+            seekBar = itemView.findViewById(R.id.seekBar);
+
+            playButton.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    // Используем currentMessageAttachments если есть, иначе attachments
+                    List<Attachment> attachmentsToUse = currentMessageAttachments != null ?
+                            currentMessageAttachments : attachments;
+                    audioPlayerHelper.togglePlayPause(position, attachmentsToUse);
+                }
+            });
+
+            // Обработка перемотки
+            if (seekBar != null) {
+                seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        if (fromUser && audioPlayerHelper.isPlayingAtPosition(getAdapterPosition())) {
+                            // Можно обновить время, но не отправлять в сервис пока не отпустим
+                        }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        // Пауза при начале перемотки (опционально)
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION && audioPlayerHelper.isPlayingAtPosition(position)) {
+                            // Отправляем команду перемотки в сервис
+                            // audioPlayerHelper.seekTo(seekBar.getProgress());
+                        }
+                    }
+                });
+            }
         }
 
-        void bind(Attachment.Audio audio) {
+        void bind(Attachment.Audio audio, int position) {
             if (audio != null) {
-                iconView.setImageResource(R.drawable.ic_audio);
                 titleText.setText(audio.getTitle());
                 artistText.setText(audio.getArtist());
                 durationText.setText(audio.getFormattedDuration());
+
+                boolean isPlaying = audioPlayerHelper.isPlayingAtPosition(position);
+                updatePlayButton(isPlaying);
+
+                // Обновляем прогресс-бар
+                if (progressBar != null) {
+                    progressBar.setVisibility(isPlaying ? View.VISIBLE : View.GONE);
+                }
+
+                // Скрываем seekBar если это не поддерживается
+                if (seekBar != null) {
+                    seekBar.setVisibility(View.GONE);
+                }
             }
+        }
+
+        private void updatePlayButton(boolean isPlaying) {
+            playButton.setImageResource(isPlaying ? R.drawable.circle_pause : R.drawable.circle_play);
+        }
+
+        // Метод для обновления прогресса воспроизведения
+        public void updateProgress(int progress, int duration) {
+            if (seekBar != null) {
+                seekBar.setMax(duration);
+                seekBar.setProgress(progress);
+            }
+
+            // Обновляем отображение времени
+            if (durationText != null) {
+                int currentSeconds = progress / 1000;
+                int totalSeconds = duration / 1000;
+                String currentTime = formatTime(currentSeconds);
+                String totalTime = formatTime(totalSeconds);
+                durationText.setText(currentTime + " / " + totalTime);
+            }
+        }
+
+        private String formatTime(int seconds) {
+            int minutes = seconds / 60;
+            int secs = seconds % 60;
+            return String.format("%d:%02d", minutes, secs);
         }
     }
 
-    // ViewHolder для голосовых сообщений
-    static class AudioMessageViewHolder extends RecyclerView.ViewHolder {
-        ImageView iconView;
+    // ViewHolder для голосовых сообщений - ИСПРАВЛЕННЫЙ
+    class AudioMessageViewHolder extends RecyclerView.ViewHolder {
+        ImageView playButton;
         TextView titleText;
         TextView durationText;
+        ProgressBar progressBar;
+        SeekBar seekBar;
+        TextView currentTimeText;
 
         public AudioMessageViewHolder(@NonNull View itemView) {
             super(itemView);
-            iconView = itemView.findViewById(R.id.audioMessageIcon);
+            playButton = itemView.findViewById(R.id.btnPlayPause);
             titleText = itemView.findViewById(R.id.audioMessageTitle);
             durationText = itemView.findViewById(R.id.audioMessageDuration);
+            progressBar = itemView.findViewById(R.id.audioProgressBar);
+            seekBar = itemView.findViewById(R.id.seekBar);
+            currentTimeText = itemView.findViewById(R.id.currentTime);
+
+            playButton.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    // Используем currentMessageAttachments если есть, иначе attachments
+                    List<Attachment> attachmentsToUse = currentMessageAttachments != null ?
+                            currentMessageAttachments : attachments;
+                    audioPlayerHelper.togglePlayPause(position, attachmentsToUse);
+                }
+            });
+
+            // Обработка перемотки для голосовых сообщений
+            if (seekBar != null) {
+                seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        if (fromUser && currentTimeText != null) {
+                            int seconds = progress / 1000;
+                            currentTimeText.setText(formatTime(seconds));
+                        }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        // Можно поставить на паузу при начале перемотки
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION && audioPlayerHelper.isPlayingAtPosition(position)) {
+                            // Отправляем команду перемотки
+                            // audioPlayerHelper.seekTo(seekBar.getProgress());
+                        }
+                    }
+                });
+            }
         }
 
-        void bind(Attachment.Document audioMessage) {
+        void bind(Attachment.Document audioMessage, int position) {
             if (audioMessage != null) {
-                iconView.setImageResource(R.drawable.circle_play);
                 titleText.setText(audioMessage.getTitle());
 
-                // Для голосовых сообщений размер - это длительность в секундах
                 int duration = audioMessage.getSize();
-                int minutes = duration / 60;
-                int seconds = duration % 60;
-                String durationStr = String.format(Locale.getDefault(), "%d:%02d", minutes, seconds);
+                String durationStr = formatTime(duration);
                 durationText.setText(durationStr);
+
+                if (currentTimeText != null) {
+                    currentTimeText.setText("0:00");
+                }
+
+                boolean isPlaying = audioPlayerHelper.isPlayingAtPosition(position);
+                updatePlayButton(isPlaying);
+
+                // Обновляем прогресс-бар
+                if (progressBar != null) {
+                    progressBar.setVisibility(isPlaying ? View.VISIBLE : View.GONE);
+                }
+
+                // Настраиваем seekBar
+                if (seekBar != null) {
+                    seekBar.setMax(duration * 1000); // конвертируем секунды в миллисекунды
+                    seekBar.setProgress(0);
+                    seekBar.setVisibility(isPlaying ? View.VISIBLE : View.GONE);
+                }
+            }
+        }
+
+        private void updatePlayButton(boolean isPlaying) {
+            playButton.setImageResource(isPlaying ? R.drawable.pause : R.drawable.play);
+        }
+
+        private String formatTime(int seconds) {
+            int minutes = seconds / 60;
+            int secs = seconds % 60;
+            return String.format("%d:%02d", minutes, secs);
+        }
+
+        // Метод для обновления прогресса воспроизведения
+        public void updateProgress(int progress, int duration) {
+            if (seekBar != null) {
+                seekBar.setMax(duration);
+                seekBar.setProgress(progress);
+            }
+
+            if (currentTimeText != null) {
+                int currentSeconds = progress / 1000;
+                currentTimeText.setText(formatTime(currentSeconds));
+            }
+
+            // Обновляем общую длительность если она изменилась
+            if (durationText != null && duration > 0) {
+                int totalSeconds = duration / 1000;
+                durationText.setText(formatTime(totalSeconds));
             }
         }
     }

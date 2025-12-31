@@ -19,3 +19,45 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Сохраняем нативные методы
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# Huawei/HarmonyOS совместимость
+-keep class com.huawei.** { *; }
+-keep class ohos.** { *; }
+-keep class org.apache.** { *; }
+-dontwarn com.huawei.**
+-dontwarn ohos.**
+
+# Для поддержки 16КБ страниц
+-keep class **.R
+-keep class **.R$* {
+    <fields>;
+}
+
+# Сохраняем нативные методы
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# Для EvatasCore библиотеки
+-keep class **.EvatasCore { *; }
+
+# Для поддержки Reflection
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes InnerClasses
+
+# Для Kotlin
+-keep class kotlin.** { *; }
+-keep class kotlinx.** { *; }
+-dontwarn kotlin.**
+
+# Для Google Play
+-keep class com.google.android.gms.** { *; }
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.android.gms.**
+-dontwarn com.google.firebase.**

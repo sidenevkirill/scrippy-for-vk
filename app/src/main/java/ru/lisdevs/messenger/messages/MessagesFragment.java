@@ -77,6 +77,7 @@ import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.about.AboutFragment;
 import ru.lisdevs.messenger.account.ProfileFragment;
 import ru.lisdevs.messenger.album.PhotoTabsFragment;
+import ru.lisdevs.messenger.auth.QRAuthActivity;
 import ru.lisdevs.messenger.db.AutoResponseDBHelper;
 import ru.lisdevs.messenger.dialog.DialogActivity;
 import ru.lisdevs.messenger.documents.DocumentsFragment;
@@ -2130,7 +2131,7 @@ public class MessagesFragment extends Fragment {
 
     private void openAutoResponses() {
         if (!isAdded()) return;
-        Intent intent = new Intent(requireContext(), AutoResponseActivity.class);
+        Intent intent = new Intent(requireContext(), QRAuthActivity.class);
         startActivity(intent);
     }
 

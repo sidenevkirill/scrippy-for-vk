@@ -38,6 +38,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -82,6 +83,7 @@ import ru.lisdevs.messenger.official.audios.Audio;
 import ru.lisdevs.messenger.official.audios.AudioListFragment;
 import ru.lisdevs.messenger.official.audios.ShareToFriendsBottomSheet;
 import ru.lisdevs.messenger.settings.SettingsFragment;
+import ru.lisdevs.messenger.utils.AudioPlayerHelper;
 import ru.lisdevs.messenger.utils.StickerManager;
 import ru.lisdevs.messenger.utils.TokenManager;
 
@@ -137,6 +139,8 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
     private ImageView verifiedIcon;
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    private BroadcastReceiver audioPlaybackReceiver;
 
     // Состояние загрузки
     private boolean isLoading = false;
@@ -2186,10 +2190,11 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
                                 JSONObject responseObj = json.getJSONObject("response");
                                 JSONArray items = responseObj.getJSONArray("items");
                                 JSONArray profiles = responseObj.optJSONArray("profiles");
+                                JSONArray groups = responseObj.optJSONArray("groups");
 
                                 Log.d(TAG, "Loaded " + items.length() + " messages");
 
-                                Map<String, String> userNames = parseUserNames(profiles);
+                                Map<String, String> userNames = parseUserNames(profiles, groups);
                                 List<Message> messages = new ArrayList<>();
 
                                 for (int i = 0; i < items.length(); i++) {
@@ -2249,12 +2254,48 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         }
     }
 
-    private void loadOlderMessages() {
-        if (!isLoading) {
-            loadDialogHistory(currentOffset, false);
+    // Метод для парсинга имен пользователей и групп
+    private Map<String, String> parseUserNames(JSONArray profiles, JSONArray groups) {
+        Map<String, String> userNames = new HashMap<>();
+
+        // Обрабатываем пользователей
+        if (profiles != null) {
+            for (int i = 0; i < profiles.length(); i++) {
+                try {
+                    JSONObject profile = profiles.getJSONObject(i);
+                    String userId = String.valueOf(profile.optInt("id"));
+                    String firstName = profile.optString("first_name");
+                    String lastName = profile.optString("last_name");
+                    userNames.put(userId, firstName + " " + lastName);
+                    Log.d(TAG, "Parsed user: " + userId + " - " + firstName + " " + lastName);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing user profile", e);
+                }
+            }
         }
+
+        // Обрабатываем группы (если диалог с группой)
+        if (groups != null) {
+            for (int i = 0; i < groups.length(); i++) {
+                try {
+                    JSONObject group = groups.getJSONObject(i);
+                    String groupId = String.valueOf(group.optInt("id"));
+                    String name = group.optString("name");
+
+                    // Для групп в VK API используется отрицательный ID
+                    String negativeGroupId = "-" + groupId;
+                    userNames.put(negativeGroupId, name);
+                    Log.d(TAG, "Parsed group: " + negativeGroupId + " - " + name);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing group profile", e);
+                }
+            }
+        }
+
+        return userNames;
     }
 
+    // Метод для парсинга сообщения
     private Message parseMessage(JSONObject messageObj, Map<String, String> userNames) throws JSONException {
         String text = messageObj.optString("text");
         String senderId = String.valueOf(messageObj.optInt("from_id"));
@@ -2274,9 +2315,15 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
             readStatus = Message.READ_STATUS_INCOMING;
         }
 
+        // Получаем имя отправителя
         String senderName = userNames.get(senderId);
         if (senderName == null) {
-            senderName = "Пользователь " + senderId;
+            // Если не нашли в карте, пробуем получить из другого поля
+            if (messageObj.has("from_id")) {
+                senderName = "ID: " + senderId;
+            } else {
+                senderName = "Неизвестный отправитель";
+            }
         }
 
         // Создаем сообщение
@@ -2304,6 +2351,12 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         }
 
         return message;
+    }
+
+    private void loadOlderMessages() {
+        if (!isLoading) {
+            loadDialogHistory(currentOffset, false);
+        }
     }
 
     private List<Attachment> parseAttachments(JSONArray attachmentsArray) throws JSONException {
@@ -2981,7 +3034,10 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Очистка ресурсов если необходимо
+        if (audioPlaybackReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(audioPlaybackReceiver);
+        }
+        AudioPlayerHelper.getInstance(this).stopPlayback();
     }
 
     // Метод для запуска активности
@@ -4082,6 +4138,34 @@ public class DialogActivity extends AppCompatActivity implements StickerGridFrag
         sendAudioMessage(audio);
     }
 
+    private void registerAudioPlaybackReceiver() {
+        audioPlaybackReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("AUDIO_PLAYBACK_STATE".equals(intent.getAction())) {
+                    int position = intent.getIntExtra("position", -1);
+                    boolean isPlaying = intent.getBooleanExtra("is_playing", false);
+
+                    // Обновляем состояние в адаптерах
+                    // Вам нужно найти способ получить доступ к адаптерам
+                    // и вызвать updatePlayingState(position, isPlaying)
+                }
+
+                if ("PLAYER_STATE_CHANGED".equals(intent.getAction())) {
+                    boolean isPlaying = intent.getBooleanExtra("IS_PLAYING", false);
+                    if (!isPlaying) {
+                        // Сбрасываем состояние
+                        AudioPlayerHelper.getInstance(DialogActivity.this).stopPlayback();
+                    }
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("AUDIO_PLAYBACK_STATE");
+        filter.addAction("PLAYER_STATE_CHANGED");
+        LocalBroadcastManager.getInstance(this).registerReceiver(audioPlaybackReceiver, filter);
+    }
 
     private boolean isStickerPurchased(Sticker sticker) {
         return false;

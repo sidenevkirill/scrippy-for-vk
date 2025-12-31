@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "ru.lisdevs.messenger",
+  "applicationId": "com.reitesstudios.mooz",
   "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 42,
-      "versionName": "0.4.2",
+      "versionCode": 1,
+      "versionName": "0.0.1",
       "outputFile": "app-release.apk"
     }
   ],

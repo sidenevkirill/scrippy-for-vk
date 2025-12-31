@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -27,6 +28,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +41,11 @@ import java.util.Map;
 
 import ru.lisdevs.messenger.R;
 import ru.lisdevs.messenger.service.MusicPlayerService;
+import ru.lisdevs.messenger.utils.Authorizer;
 import ru.lisdevs.messenger.utils.TokenManager;
 
 public class GroupPostsFragment extends Fragment implements ServiceConnection {
-    private static final String TAG = "VKPostsFragment";
+    private static final String TAG = "GroupPostsFragment";
     private static final String VK_API_BASE_URL = "https://api.vk.com/method/";
     private static final String VK_API_VERSION = "5.131";
 
@@ -51,36 +59,18 @@ public class GroupPostsFragment extends Fragment implements ServiceConnection {
     private String currentAudioUrl = "";
     private Toolbar toolbar;
     private String groupId;
+    private String groupName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_post_group, container, false);
+        View view = inflater.inflate(R.layout.fragment_posts, container, false);
 
-        // Получаем переданный GROUP_ID
+        // Получаем переданные параметры
         if (getArguments() != null) {
-            groupId = getArguments().getString("GROUP_ID");
-            // Теперь groupId содержит ID группы, можно использовать в фрагменте
-            Log.d("GroupPlaylistsFragment", "Received GROUP_ID: " + groupId);
-    }
-
-      /*  toolbar = view.findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.menu_account);
-
-        toolbar.setOnMenuItemClickListener(item -> {
-
-            if (item.getItemId() == R.id.action_show_account) {
-                AcountPostsFragment acountPostsFragment = new AcountPostsFragment();
-
-                FragmentManager fragmentManager = getParentFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.container, acountPostsFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-
-            }
-
-            return false;
-        });*/
+            groupId = String.valueOf(getArguments().getLong("group_id"));
+            groupName = getArguments().getString("group_name");
+            Log.d(TAG, "Received group_id: " + groupId + ", group_name: " + groupName);
+        }
 
         postsRecycler = view.findViewById(R.id.recyclerView);
         swipeRefresh = view.findViewById(R.id.swipeRefreshLayout);
@@ -127,62 +117,114 @@ public class GroupPostsFragment extends Fragment implements ServiceConnection {
     private void loadVKPosts() {
         swipeRefresh.setRefreshing(true);
 
-        Map<String, String> params = new HashMap<>();
-        params.put("owner_id", String.valueOf(groupId)); // ID группы
-        params.put("count", "20");
-        params.put("access_token", TokenManager.getInstance(getContext()).getToken());
-        params.put("v", VK_API_VERSION);
-        params.put("extended", "1");
-        params.put("fields", "photo_100,first_name,last_name");
-
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                buildUrl(params),
-                response -> {
-                    try {
-                        parseResponse(response);
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Error parsing response", e);
-                        showError("Ошибка обработки данных");
+        // Используем OkHttp вместо Volley для лучшего контроля над User-Agent
+        new Thread(() -> {
+            try {
+                List<Post> result = loadVKPostsWithAudio();
+                requireActivity().runOnUiThread(() -> {
+                    if (result != null && !result.isEmpty()) {
+                        posts.clear();
+                        posts.addAll(result);
+                        postAdapter.notifyDataSetChanged();
+                    } else {
+                        showError("Нет данных или ошибка загрузки");
                     }
-                },
-                error -> {
-                    Log.e(TAG, "Request error", error);
-                    showError("Ошибка загрузки");
-                }
-        );
-
-        Volley.newRequestQueue(requireContext()).add(request);
+                    swipeRefresh.setRefreshing(false);
+                });
+            } catch (Exception e) {
+                requireActivity().runOnUiThread(() -> {
+                    showError("Ошибка загрузки: " + e.getMessage());
+                    swipeRefresh.setRefreshing(false);
+                });
+            }
+        }).start();
     }
 
-    private String buildUrl(Map<String, String> params) {
-        Uri.Builder builder = Uri.parse(VK_API_BASE_URL + "wall.get").buildUpon();
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            builder.appendQueryParameter(entry.getKey(), entry.getValue());
+    private List<Post> loadVKPostsWithAudio() {
+        String accessToken = TokenManager.getInstance(getContext()).getToken();
+        String userAgent = getUserAgent();
+
+        try {
+            String urlString = "https://api.vk.com/method/wall.get" +
+                    "?owner_id=" + URLEncoder.encode(String.valueOf(-Long.parseLong(groupId)), "UTF-8") +
+                    "&count=20" +
+                    "&v=" + URLEncoder.encode(VK_API_VERSION, "UTF-8") +
+                    "&access_token=" + URLEncoder.encode(accessToken, "UTF-8") +
+                    "&extended=1" +
+                    "&fields=photo_100,first_name,last_name";
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent", userAgent);
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
+
+            int responseCode = connection.getResponseCode();
+            InputStream inputStream;
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                inputStream = connection.getInputStream();
+            } else {
+                inputStream = connection.getErrorStream();
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder responseBuilder = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                responseBuilder.append(line);
+            }
+            reader.close();
+            connection.disconnect();
+
+            String responseStr = responseBuilder.toString();
+            return parseVKResponse(responseStr);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading VK posts", e);
+            return null;
         }
-        return builder.build().toString();
     }
 
-    private void parseResponse(String response) throws JSONException {
+    private List<Post> parseVKResponse(String response) throws JSONException {
         JSONObject json = new JSONObject(response);
+
+        if (json.has("error")) {
+            JSONObject error = json.getJSONObject("error");
+            String errorMsg = error.optString("error_msg", "Unknown error");
+            Log.e(TAG, "API Error: " + errorMsg);
+            return null;
+        }
+
         JSONObject responseObj = json.getJSONObject("response");
 
         Map<Integer, User> users = parseUsers(responseObj.optJSONArray("profiles"));
         Map<Integer, Group> groups = parseGroups(responseObj.optJSONArray("groups"));
 
         JSONArray items = responseObj.getJSONArray("items");
-        posts.clear();
+        List<Post> postList = new ArrayList<>();
 
         for (int i = 0; i < items.length(); i++) {
             JSONObject postJson = items.getJSONObject(i);
             Post post = parsePost(postJson, users, groups);
-            if (post != null) {
-                posts.add(post);
+            if (post != null && hasAudioAttachments(post)) {
+                postList.add(post);
             }
         }
 
-        postAdapter.notifyDataSetChanged();
-        swipeRefresh.setRefreshing(false);
+        return postList;
+    }
+
+    private boolean hasAudioAttachments(Post post) {
+        if (post.attachments == null) return false;
+        for (Attachment attachment : post.attachments) {
+            if (attachment instanceof AudioAttachment) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Map<Integer, User> parseUsers(JSONArray usersArray) throws JSONException {
@@ -266,7 +308,10 @@ public class GroupPostsFragment extends Fragment implements ServiceConnection {
                         }
                         break;
                     case "audio":
-                        attachments.add(parseAudioAttachment(attachmentJson));
+                        AudioAttachment audio = parseAudioAttachment(attachmentJson);
+                        if (audio != null && audio.url != null && !audio.url.isEmpty()) {
+                            attachments.add(audio);
+                        }
                         break;
                 }
             }
@@ -298,15 +343,46 @@ public class GroupPostsFragment extends Fragment implements ServiceConnection {
     }
 
     private AudioAttachment parseAudioAttachment(JSONObject attachmentJson) throws JSONException {
-        JSONObject audioJson = attachmentJson.getJSONObject("audio");
-        AudioAttachment audio = new AudioAttachment();
-        audio.id = audioJson.getInt("id");
-        audio.ownerId = audioJson.getInt("owner_id");
-        audio.artist = audioJson.getString("artist");
-        audio.title = audioJson.getString("title");
-        audio.duration = audioJson.getInt("duration");
-        audio.url = audioJson.getString("url");
-        return audio;
+        try {
+            JSONObject audioJson = attachmentJson.getJSONObject("audio");
+            AudioAttachment audio = new AudioAttachment();
+            audio.id = audioJson.getInt("id");
+            audio.ownerId = audioJson.getInt("owner_id");
+            audio.artist = audioJson.optString("artist", "Неизвестный исполнитель");
+            audio.title = audioJson.optString("title", "Без названия");
+            audio.duration = audioJson.optInt("duration", 0);
+            audio.url = audioJson.optString("url", "");
+            return audio;
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing audio attachment", e);
+            return null;
+        }
+    }
+
+    private String getUserAgent() {
+        if (isAuthViaAuthActivity()) {
+            return "VKAndroidApp/1.0";
+        } else {
+            try {
+                return Authorizer.getKateUserAgent();
+            } catch (Exception e) {
+                return "VKAndroidApp/1.0";
+            }
+        }
+    }
+
+    private boolean isAuthViaAuthActivity() {
+        if (getContext() == null) return true;
+
+        SharedPreferences prefs = getContext().getSharedPreferences("auth_prefs", Context.MODE_PRIVATE);
+        String authType = prefs.getString("auth_type", null);
+
+        if (authType != null) {
+            return "AuthActivity".equals(authType);
+        }
+
+        // По умолчанию возвращаем true для совместимости
+        return true;
     }
 
     public void playAudio(String url, int position, String title, String artist) {
@@ -387,11 +463,24 @@ public class GroupPostsFragment extends Fragment implements ServiceConnection {
 
         // Устанавливаем обработчик нажатия
         toolbar.setNavigationOnClickListener(v -> {
-            // Возвращаемся назад
             requireActivity().onBackPressed();
         });
 
-        // Если нужно показать title
-        toolbar.setTitle("Лента");
+        // Устанавливаем заголовок
+        if (groupName != null && !groupName.isEmpty()) {
+            toolbar.setTitle(groupName);
+        } else {
+            toolbar.setTitle("Посты группы");
+        }
+    }
+
+    // Статический метод для создания нового экземпляра фрагмента
+    public static GroupPostsFragment newInstance(long groupId, String groupName) {
+        GroupPostsFragment fragment = new GroupPostsFragment();
+        Bundle args = new Bundle();
+        args.putLong("group_id", groupId);
+        args.putString("group_name", groupName);
+        fragment.setArguments(args);
+        return fragment;
     }
 }
